@@ -538,35 +538,21 @@
                       <Font name="Calibri" size="14" style="0"/>
                     </Property>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="4" rowCount="4">
-                        <Column editable="true" title="Invoice No." type="java.lang.String">
-                          <Data value="1"/>
-                          <Data value="2"/>
-                          <Data value="3"/>
-                          <Data value="4"/>
-                        </Column>
-                        <Column editable="true" title="Date" type="java.lang.String">
-                          <Data value="22/11/2018"/>
-                          <Data value="12/01/2019"/>
-                          <Data value="14/02/2019"/>
-                          <Data value="20/03/2019"/>
-                        </Column>
-                        <Column editable="true" title="Customer" type="java.lang.String">
-                          <Data value="John Doe"/>
-                          <Data value="Axel Rose"/>
-                          <Data value="Marlon Brando"/>
-                          <Data value="Jen Levy"/>
-                        </Column>
-                        <Column editable="true" title="Invoice Amount" type="java.lang.Float">
-                          <Data value="877.0"/>
-                          <Data value="853.0"/>
-                          <Data value="325.0"/>
-                          <Data value="1551.0"/>
-                        </Column>
+                      <Table columnCount="5" rowCount="0">
+                        <Column editable="true" title="ID" type="java.lang.String"/>
+                        <Column editable="true" title="Customer" type="java.lang.String"/>
+                        <Column editable="true" title="Date" type="java.lang.String"/>
+                        <Column editable="true" title="Remarks" type="java.lang.String"/>
+                        <Column editable="true" title="Invoice Amount" type="java.lang.Float"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title/>
                           <Editor/>
@@ -1526,7 +1512,6 @@
                                   </Group>
                               </Group>
                               <Group type="102" attributes="0">
-                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                                   <Component id="product_details_lbl2" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -2178,32 +2163,29 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
+                          <EmptySpace min="30" pref="30" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                  <Component id="new_pdt_lbl" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="save_product_btn_lbl" min="-2" pref="167" max="-2" attributes="0"/>
-                                      <Group type="102" attributes="0">
-                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                              <Component id="pdt_desc_lbl" alignment="0" max="32767" attributes="0"/>
-                                              <Component id="pdt_name_lbl" alignment="0" min="-2" pref="49" max="-2" attributes="0"/>
-                                              <Component id="pdt_unit_price_lbl" alignment="0" max="32767" attributes="0"/>
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="pdt_discount_lbl" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                              <Component id="new_pdt_lbl" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                                  <Component id="save_product_btn_lbl" min="-2" pref="167" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="pdt_desc_lbl" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="pdt_unit_price_lbl" alignment="0" max="32767" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="pdt_name_lbl" alignment="0" min="-2" pref="49" max="-2" attributes="0"/>
+                                                  <Component id="pdt_discount_lbl" alignment="0" min="-2" max="-2" attributes="0"/>
                                               </Group>
+                                              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                              <Component id="pdt_name_input" max="32767" attributes="0"/>
-                                              <Component id="pdt_desc_input" max="32767" attributes="0"/>
-                                              <Component id="pdt_unit_price_input" alignment="1" max="32767" attributes="0"/>
-                                              <Component id="pdt_discount_input" alignment="0" min="-2" pref="577" max="-2" attributes="0"/>
-                                          </Group>
+                                      </Group>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="pdt_name_input" max="32767" attributes="0"/>
+                                          <Component id="pdt_desc_input" max="32767" attributes="0"/>
+                                          <Component id="pdt_unit_price_input" alignment="1" max="32767" attributes="0"/>
+                                          <Component id="pdt_discount_input" alignment="0" min="-2" pref="577" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -2401,10 +2383,7 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                                  <Component id="pdt_desc_lbl2" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="pdt_desc_lbl2" min="-2" max="-2" attributes="0"/>
                               <Component id="pdt_desc_input2" pref="177" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>

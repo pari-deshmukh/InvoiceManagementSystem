@@ -9,9 +9,17 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,7 +29,86 @@ public class HomeUI extends javax.swing.JFrame {
 
     private int xx;
     private int xy;
+    
+    public ArrayList<Invoice> invoiceList() {
+        ArrayList<Invoice> invoiceList = new ArrayList<>();
+        
+        PreparedStatement ps;
+        ResultSet rs;
+        Invoice invoice;
+        String queryInvoices = "Select * FROM `inv_invoices`";
 
+        try {
+
+            ps = DbConnection.getConnection().prepareStatement(queryInvoices);
+
+            rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                invoice = new Invoice(rs.getInt("id"), rs.getString("customer"), rs.getString("remarks"), rs.getDate("inv_date"), rs.getFloat("subtotal"), rs.getFloat("vat"), rs.getFloat("service_tax"), rs.getFloat("discount"), rs.getFloat("cash"), rs.getFloat("change_amt"));
+                invoiceList.add(invoice);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+        return invoiceList;
+    }
+    
+    public void show_invoice() {
+        ArrayList<Invoice> inv_list = invoiceList();
+        DefaultTableModel itm = (DefaultTableModel)invoice_list_tbl.getModel();
+        itm.setRowCount(0);
+        Object[] row = new Object[5];
+        for (int i=0;i<inv_list.size();i++) {
+            row[0] = inv_list.get(i).getid();
+            row[1] = inv_list.get(i).getcustomer();
+            row[2] = inv_list.get(i).getinvdate();
+            row[3] = inv_list.get(i).getremarks();
+            row[4] = inv_list.get(i).getcash();
+            itm.addRow(row);
+        }
+    }
+    
+    public ArrayList<Product> productList() {
+        ArrayList<Product> productList = new ArrayList<>();
+        
+        PreparedStatement ps;
+        ResultSet rs;
+        Product product;
+        String queryInvoices = "Select * FROM `inv_products`";
+
+        try {
+
+            ps = DbConnection.getConnection().prepareStatement(queryInvoices);
+
+            rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                product = new Product(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getFloat("discount"), rs.getFloat("unit_price"));
+                productList.add(product);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+        return productList;
+    }
+    public void show_product() {
+        ArrayList<Product> pdt_list = productList();
+        DefaultTableModel ptm = (DefaultTableModel)product_list_tbl.getModel();
+        ptm.setRowCount(0);
+        Object[] row = new Object[5];
+        for (int i=0;i<pdt_list.size();i++) {
+            row[0] = pdt_list.get(i).getid();
+            row[1] = pdt_list.get(i).getname();
+            row[2] = pdt_list.get(i).getdescription();
+            row[3] = pdt_list.get(i).getdiscount();
+            row[4] = pdt_list.get(i).getunitprice();
+            ptm.addRow(row);
+        }
+    }
+    
     /**
      * Creates new form Home
      */
@@ -37,7 +124,9 @@ public class HomeUI extends javax.swing.JFrame {
         
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.LEFT);
-        invoice_list_tbl.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        invoice_list_tbl.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        this.show_invoice();
+        this.show_product();
     }
 
     /**
@@ -495,17 +584,14 @@ public class HomeUI extends javax.swing.JFrame {
         invoice_list_tbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         invoice_list_tbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", "22/11/2018", "John Doe",  new Float(877.0)},
-                {"2", "12/01/2019", "Axel Rose",  new Float(853.0)},
-                {"3", "14/02/2019", "Marlon Brando",  new Float(325.0)},
-                {"4", "20/03/2019", "Jen Levy",  new Float(1551.0)}
+
             },
             new String [] {
-                "Invoice No.", "Date", "Customer", "Invoice Amount"
+                "ID", "Customer", "Date", "Remarks", "Invoice Amount"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1268,7 +1354,6 @@ public class HomeUI extends javax.swing.JFrame {
                             .addComponent(change_lbl2)
                             .addComponent(change_input2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(update_invoice_pnlLayout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addComponent(product_details_lbl2)
                         .addGap(5, 5, 5)
                         .addGroup(update_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1428,28 +1513,26 @@ public class HomeUI extends javax.swing.JFrame {
         add_product_pnlLayout.setHorizontalGroup(
             add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(add_product_pnlLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
                 .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(add_product_pnlLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(new_pdt_lbl))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, add_product_pnlLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(save_product_btn_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(add_product_pnlLayout.createSequentialGroup()
-                                .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(pdt_desc_lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(pdt_name_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(pdt_unit_price_lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(add_product_pnlLayout.createSequentialGroup()
-                                        .addComponent(pdt_discount_lbl)
-                                        .addGap(22, 22, 22)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(pdt_name_input)
-                                    .addComponent(pdt_desc_input)
-                                    .addComponent(pdt_unit_price_input, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(pdt_discount_input, javax.swing.GroupLayout.PREFERRED_SIZE, 577, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                    .addComponent(new_pdt_lbl)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(save_product_btn_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(add_product_pnlLayout.createSequentialGroup()
+                            .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(pdt_desc_lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(pdt_unit_price_lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(add_product_pnlLayout.createSequentialGroup()
+                                    .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pdt_name_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(pdt_discount_lbl))
+                                    .addGap(22, 22, 22)))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(pdt_name_input)
+                                .addComponent(pdt_desc_input)
+                                .addComponent(pdt_unit_price_input, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(pdt_discount_input, javax.swing.GroupLayout.PREFERRED_SIZE, 577, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(50, 50, 50))
         );
         add_product_pnlLayout.setVerticalGroup(
@@ -1567,9 +1650,7 @@ public class HomeUI extends javax.swing.JFrame {
                     .addComponent(pdt_name_lbl3))
                 .addGap(18, 18, 18)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(update_product_pnlLayout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addComponent(pdt_desc_lbl2))
+                    .addComponent(pdt_desc_lbl2)
                     .addComponent(pdt_desc_input2, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1708,6 +1789,7 @@ public class HomeUI extends javax.swing.JFrame {
         update_product_pnl.setVisible(false);
         product_list_scrl_pane.setVisible(false);
         delete_product_pnl.setVisible(false);
+        this.show_invoice();
     }//GEN-LAST:event_sidebar_invoice_list_btn_lblMouseClicked
 
     private void sidebar_add_invoice_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sidebar_add_invoice_btn_lblMouseClicked
@@ -1883,6 +1965,8 @@ public class HomeUI extends javax.swing.JFrame {
         update_product_pnl.setVisible(false);
         product_list_scrl_pane.setVisible(true);
         delete_product_pnl.setVisible(false);
+        
+        this.show_product();
     }//GEN-LAST:event_sidebar_product_list_btn_lblMouseClicked
 
     private void pdt_desc_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdt_desc_inputActionPerformed
