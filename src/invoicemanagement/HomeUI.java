@@ -2126,29 +2126,31 @@ public class HomeUI extends javax.swing.JFrame {
     }//GEN-LAST:event_save_product_btn_lblMouseClicked
 
     private void pdt_id_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pdt_id_inputKeyReleased
-        int id = Integer.parseInt(pdt_id_input.getText());
-        
-        PreparedStatement ps;
-        ResultSet rs;
-        String queryInvoices = "SELECT * FROM `inv_products` WHERE `id` = ?";
+        if(pdt_id_input.getText() == null || pdt_id_input.getText().equals("")) {
+        } else {
+            int id = Integer.parseInt(pdt_id_input.getText());
+            PreparedStatement ps;
+            ResultSet rs;
+            String queryInvoices = "SELECT * FROM `inv_products` WHERE `id` = ?";
 
-        try {
+            try {
 
-            ps = DbConnection.getConnection().prepareStatement(queryInvoices);
+                ps = DbConnection.getConnection().prepareStatement(queryInvoices);
 
-            ps.setInt(1, id);
-            
-            rs = ps.executeQuery();
-            
-            while(rs.next()) {
-                Product product = new Product(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getFloat("discount"), rs.getFloat("unit_price"));
-                update_pdt_name_input.setText(product.getname());
-                update_pdt_desc_input.setText(product.getdescription());
-                update_pdt_unit_price_input.setText(Float.toString(product.getunitprice()));
-                update_pdt_discount_input.setText(Float.toString(product.getdiscount()));
+                ps.setInt(1, id);
+
+                rs = ps.executeQuery();
+
+                while(rs.next()) {
+                    Product product = new Product(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getFloat("discount"), rs.getFloat("unit_price"));
+                    update_pdt_name_input.setText(product.getname());
+                    update_pdt_desc_input.setText(product.getdescription());
+                    update_pdt_unit_price_input.setText(Float.toString(product.getunitprice()));
+                    update_pdt_discount_input.setText(Float.toString(product.getdiscount()));
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, ex);
             }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, ex);
         }
     }//GEN-LAST:event_pdt_id_inputKeyReleased
 
