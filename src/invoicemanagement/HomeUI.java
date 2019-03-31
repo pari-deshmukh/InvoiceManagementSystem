@@ -136,7 +136,7 @@ public class HomeUI extends javax.swing.JFrame {
         }
         return productList;
     }
-    public void show_product() {
+    public void show_products() {
         ArrayList<Product> pdt_list = productList();
         DefaultTableModel ptm = (DefaultTableModel)product_list_tbl.getModel();
         ptm.setRowCount(0);
@@ -145,8 +145,8 @@ public class HomeUI extends javax.swing.JFrame {
             row[0] = pdt_list.get(i).getid();
             row[1] = pdt_list.get(i).getname();
             row[2] = pdt_list.get(i).getdescription();
-            row[3] = pdt_list.get(i).getdiscount();
-            row[4] = pdt_list.get(i).getunitprice();
+            row[3] = pdt_list.get(i).getunitprice();
+            row[4] = pdt_list.get(i).getdiscount();
             ptm.addRow(row);
         }
     }
@@ -167,8 +167,10 @@ public class HomeUI extends javax.swing.JFrame {
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.LEFT);
         invoice_list_tbl.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        product_list_tbl.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        product_list_tbl.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         this.show_invoice();
-        this.show_product();
+        this.show_products();
     }
 
     /**
@@ -305,18 +307,18 @@ public class HomeUI extends javax.swing.JFrame {
         pdt_discount_input = new javax.swing.JTextField();
         save_product_btn_lbl = new javax.swing.JLabel();
         update_product_pnl = new javax.swing.JPanel();
-        pdt_desc_input2 = new javax.swing.JTextField();
+        update_pdt_desc_input = new javax.swing.JTextField();
         pdt_unit_price_lbl2 = new javax.swing.JLabel();
-        pdt_unit_price_input2 = new javax.swing.JTextField();
+        update_pdt_unit_price_input = new javax.swing.JTextField();
         pdt_discount_lbl2 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        pdt_discount_input2 = new javax.swing.JTextField();
+        update_pdt_discount_input = new javax.swing.JTextField();
         pdt_id_input = new javax.swing.JTextField();
-        save_product_btn_lbl4 = new javax.swing.JLabel();
+        update_product_btn_lbl = new javax.swing.JLabel();
         pdt_name_lbl3 = new javax.swing.JLabel();
         pdt_desc_lbl2 = new javax.swing.JLabel();
         pdt_id_lbl = new javax.swing.JLabel();
-        pdt_name_input4 = new javax.swing.JTextField();
+        update_pdt_name_input = new javax.swing.JTextField();
         delete_product_pnl = new javax.swing.JPanel();
         delete_product_lbl = new javax.swing.JLabel();
         delete_product_id_input = new javax.swing.JTextField();
@@ -1554,6 +1556,11 @@ public class HomeUI extends javax.swing.JFrame {
         save_product_btn_lbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         save_product_btn_lbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         save_product_btn_lbl.setOpaque(true);
+        save_product_btn_lbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                save_product_btn_lblMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout add_product_pnlLayout = new javax.swing.GroupLayout(add_product_pnl);
         add_product_pnl.setLayout(add_product_pnlLayout);
@@ -1612,17 +1619,17 @@ public class HomeUI extends javax.swing.JFrame {
 
         update_product_pnl.setBackground(new java.awt.Color(255, 255, 255));
 
-        pdt_desc_input2.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
-        pdt_desc_input2.addActionListener(new java.awt.event.ActionListener() {
+        update_pdt_desc_input.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        update_pdt_desc_input.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pdt_desc_input2ActionPerformed(evt);
+                update_pdt_desc_inputActionPerformed(evt);
             }
         });
 
         pdt_unit_price_lbl2.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
         pdt_unit_price_lbl2.setText("Unit Price");
 
-        pdt_unit_price_input2.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        update_pdt_unit_price_input.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
 
         pdt_discount_lbl2.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
         pdt_discount_lbl2.setText("Discount");
@@ -1630,18 +1637,28 @@ public class HomeUI extends javax.swing.JFrame {
         jLabel7.setFont(new java.awt.Font("Calibri", 0, 24)); // NOI18N
         jLabel7.setText("Update Product");
 
-        pdt_discount_input2.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        update_pdt_discount_input.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
 
         pdt_id_input.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        pdt_id_input.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                pdt_id_inputKeyReleased(evt);
+            }
+        });
 
-        save_product_btn_lbl4.setBackground(new java.awt.Color(0, 102, 204));
-        save_product_btn_lbl4.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
-        save_product_btn_lbl4.setForeground(new java.awt.Color(255, 255, 255));
-        save_product_btn_lbl4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        save_product_btn_lbl4.setText("Update");
-        save_product_btn_lbl4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        save_product_btn_lbl4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        save_product_btn_lbl4.setOpaque(true);
+        update_product_btn_lbl.setBackground(new java.awt.Color(0, 102, 204));
+        update_product_btn_lbl.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        update_product_btn_lbl.setForeground(new java.awt.Color(255, 255, 255));
+        update_product_btn_lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        update_product_btn_lbl.setText("Update");
+        update_product_btn_lbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        update_product_btn_lbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        update_product_btn_lbl.setOpaque(true);
+        update_product_btn_lbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                update_product_btn_lblMouseClicked(evt);
+            }
+        });
 
         pdt_name_lbl3.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
         pdt_name_lbl3.setText("Name");
@@ -1654,7 +1671,7 @@ public class HomeUI extends javax.swing.JFrame {
         pdt_id_lbl.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
         pdt_id_lbl.setText("ID");
 
-        pdt_name_input4.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        update_pdt_name_input.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout update_product_pnlLayout = new javax.swing.GroupLayout(update_product_pnl);
         update_product_pnl.setLayout(update_product_pnlLayout);
@@ -1664,7 +1681,7 @@ public class HomeUI extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(save_product_btn_lbl4, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(update_product_btn_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(update_product_pnlLayout.createSequentialGroup()
                         .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pdt_id_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1675,11 +1692,11 @@ public class HomeUI extends javax.swing.JFrame {
                                 .addComponent(pdt_unit_price_lbl2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(16, 16, 16)
                         .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(pdt_name_input4)
+                            .addComponent(update_pdt_name_input)
                             .addComponent(pdt_id_input)
-                            .addComponent(pdt_unit_price_input2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(pdt_discount_input2, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
-                            .addComponent(pdt_desc_input2))))
+                            .addComponent(update_pdt_unit_price_input, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(update_pdt_discount_input, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
+                            .addComponent(update_pdt_desc_input))))
                 .addContainerGap(76, Short.MAX_VALUE))
         );
         update_product_pnlLayout.setVerticalGroup(
@@ -1693,22 +1710,22 @@ public class HomeUI extends javax.swing.JFrame {
                     .addComponent(pdt_id_lbl))
                 .addGap(18, 18, 18)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(pdt_name_input4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(update_pdt_name_input, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pdt_name_lbl3))
                 .addGap(18, 18, 18)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pdt_desc_lbl2)
-                    .addComponent(pdt_desc_input2, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
+                    .addComponent(update_pdt_desc_input, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pdt_unit_price_input2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(update_pdt_unit_price_input, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pdt_unit_price_lbl2))
                 .addGap(20, 20, 20)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(pdt_discount_input2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(update_pdt_discount_input, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pdt_discount_lbl2))
                 .addGap(18, 18, 18)
-                .addComponent(save_product_btn_lbl4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(update_product_btn_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22))
         );
 
@@ -2018,7 +2035,7 @@ public class HomeUI extends javax.swing.JFrame {
         product_list_scrl_pane.setVisible(true);
         delete_product_pnl.setVisible(false);
         
-        this.show_product();
+        this.show_products();
     }//GEN-LAST:event_sidebar_product_list_btn_lblMouseClicked
 
     private void pdt_desc_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdt_desc_inputActionPerformed
@@ -2053,9 +2070,9 @@ public class HomeUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_discount_percent_input2ActionPerformed
 
-    private void pdt_desc_input2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdt_desc_input2ActionPerformed
+    private void update_pdt_desc_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_update_pdt_desc_inputActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_pdt_desc_input2ActionPerformed
+    }//GEN-LAST:event_update_pdt_desc_inputActionPerformed
 
     private void delete_invoice_id_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_invoice_id_inputActionPerformed
         // TODO add your handling code here:
@@ -2068,12 +2085,105 @@ public class HomeUI extends javax.swing.JFrame {
     private void delete_invoice_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_delete_invoice_btn_lblMouseClicked
         int inv_id = Integer.parseInt(delete_invoice_id_input.getText());
         this.delete_invoice(inv_id);
+        this.sidebar_invoice_list_btn_lblMouseClicked(evt);
     }//GEN-LAST:event_delete_invoice_btn_lblMouseClicked
 
     private void delete_product_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_delete_product_btn_lblMouseClicked
         int pdt_id = Integer.parseInt(delete_product_id_input.getText());
         this.delete_product(pdt_id);
+        this.sidebar_product_list_btn_lblMouseClicked(evt);
     }//GEN-LAST:event_delete_product_btn_lblMouseClicked
+
+    private void save_product_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_save_product_btn_lblMouseClicked
+        String name = pdt_name_input.getText();
+        String description = pdt_desc_input.getText();
+        Float unit_price = Float.parseFloat(pdt_unit_price_input.getText());
+        Float discount = Float.parseFloat(pdt_discount_input.getText());
+        
+        PreparedStatement ps;
+        int rs;
+        String queryInvoices = "INSERT INTO `inv_products` (name, description, unit_price, discount) VALUES (?, ?, ?, ?)";
+
+        try {
+
+            ps = DbConnection.getConnection().prepareStatement(queryInvoices);
+
+            ps.setString(1, name);
+            ps.setString(2, description);
+            ps.setFloat(3, unit_price);
+            ps.setFloat(4, discount);
+            
+            rs = ps.executeUpdate();
+            if(rs > 0) {
+                JOptionPane.showMessageDialog(this, "Product added!");
+                this.sidebar_product_list_btn_lblMouseClicked(evt);
+            } else {
+                JOptionPane.showMessageDialog(this, "Product could not be added!");
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+    }//GEN-LAST:event_save_product_btn_lblMouseClicked
+
+    private void pdt_id_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pdt_id_inputKeyReleased
+        int id = Integer.parseInt(pdt_id_input.getText());
+        
+        PreparedStatement ps;
+        ResultSet rs;
+        String queryInvoices = "SELECT * FROM `inv_products` WHERE `id` = ?";
+
+        try {
+
+            ps = DbConnection.getConnection().prepareStatement(queryInvoices);
+
+            ps.setInt(1, id);
+            
+            rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                Product product = new Product(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getFloat("discount"), rs.getFloat("unit_price"));
+                update_pdt_name_input.setText(product.getname());
+                update_pdt_desc_input.setText(product.getdescription());
+                update_pdt_unit_price_input.setText(Float.toString(product.getunitprice()));
+                update_pdt_discount_input.setText(Float.toString(product.getdiscount()));
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+    }//GEN-LAST:event_pdt_id_inputKeyReleased
+
+    private void update_product_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_update_product_btn_lblMouseClicked
+        int id = Integer.parseInt(pdt_id_input.getText());
+        String name = update_pdt_name_input.getText();
+        String description = update_pdt_desc_input.getText();
+        Float unit_price = Float.parseFloat(update_pdt_unit_price_input.getText());
+        Float discount = Float.parseFloat(update_pdt_discount_input.getText());
+        
+        PreparedStatement ps;
+        int rs;
+        String queryInvoices = "UPDATE `inv_products` SET `name` = ?, `description` = ?, `unit_price` = ?, `discount` = ? WHERE `id` = ?";
+
+        try {
+
+            ps = DbConnection.getConnection().prepareStatement(queryInvoices);
+
+            ps.setString(1, name);
+            ps.setString(2, description);
+            ps.setFloat(3, unit_price);
+            ps.setFloat(4, discount);
+            ps.setFloat(5, id);
+            
+            rs = ps.executeUpdate();
+            if(rs > 0) {
+                JOptionPane.showMessageDialog(this, "Product updated!");
+                this.sidebar_product_list_btn_lblMouseClicked(evt);
+            } else {
+                JOptionPane.showMessageDialog(this, "Product could not be updated!");
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+    }//GEN-LAST:event_update_product_btn_lblMouseClicked
  
     /**
      * @param args the command line arguments
@@ -2173,21 +2283,17 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JLabel logout;
     private javax.swing.JLabel new_pdt_lbl;
     private javax.swing.JTextField pdt_desc_input;
-    private javax.swing.JTextField pdt_desc_input2;
     private javax.swing.JLabel pdt_desc_lbl;
     private javax.swing.JLabel pdt_desc_lbl2;
     private javax.swing.JTextField pdt_discount_input;
-    private javax.swing.JTextField pdt_discount_input2;
     private javax.swing.JLabel pdt_discount_lbl;
     private javax.swing.JLabel pdt_discount_lbl2;
     private javax.swing.JTextField pdt_id_input;
     private javax.swing.JLabel pdt_id_lbl;
     private javax.swing.JTextField pdt_name_input;
-    private javax.swing.JTextField pdt_name_input4;
     private javax.swing.JLabel pdt_name_lbl;
     private javax.swing.JLabel pdt_name_lbl3;
     private javax.swing.JTextField pdt_unit_price_input;
-    private javax.swing.JTextField pdt_unit_price_input2;
     private javax.swing.JLabel pdt_unit_price_lbl;
     private javax.swing.JLabel pdt_unit_price_lbl2;
     private javax.swing.JLabel product_details_lbl;
@@ -2213,7 +2319,6 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JLabel save_product_btn_lbl;
     private javax.swing.JLabel save_product_btn_lbl1;
     private javax.swing.JLabel save_product_btn_lbl2;
-    private javax.swing.JLabel save_product_btn_lbl4;
     private javax.swing.JLabel service_tax_lbl;
     private javax.swing.JLabel service_tax_lbl2;
     private javax.swing.JPanel sidebar;
@@ -2250,6 +2355,11 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JLabel update_invoice_lbl;
     private javax.swing.JPanel update_invoice_pnl;
     private javax.swing.JComboBox<String> update_invoice_product_combo_box;
+    private javax.swing.JTextField update_pdt_desc_input;
+    private javax.swing.JTextField update_pdt_discount_input;
+    private javax.swing.JTextField update_pdt_name_input;
+    private javax.swing.JTextField update_pdt_unit_price_input;
+    private javax.swing.JLabel update_product_btn_lbl;
     private javax.swing.JPanel update_product_pnl;
     private javax.swing.JLabel user_login_heading_lbl;
     private javax.swing.JTextField vat_amount_input;
