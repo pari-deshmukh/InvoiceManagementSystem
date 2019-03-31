@@ -70,6 +70,48 @@ public class HomeUI extends javax.swing.JFrame {
         }
     }
     
+    public void delete_invoice(int inv_id) {
+        PreparedStatement ps;
+        int rs;
+        String deleteInvoice = "DELETE FROM `inv_invoices` WHERE id = ?";
+        
+        try {
+            ps = DbConnection.getConnection().prepareStatement(deleteInvoice);
+            
+            ps.setInt(1, inv_id);
+            
+            rs = ps.executeUpdate();
+            if(rs > 0) {
+                JOptionPane.showMessageDialog(this, "Invoice Deleted!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Invoice not Found!");
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+    }
+    
+    public void delete_product(int pdt_id) {
+        PreparedStatement ps;
+        int rs;
+        String deleteProduct = "DELETE FROM `inv_products` WHERE id = ?";
+        
+        try {
+            ps = DbConnection.getConnection().prepareStatement(deleteProduct);
+            
+            ps.setInt(1, pdt_id);
+            
+            rs = ps.executeUpdate();
+            if(rs > 0) {
+                JOptionPane.showMessageDialog(this, "Product Deleted!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Product not Found!");
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+    }
+    
     public ArrayList<Product> productList() {
         ArrayList<Product> productList = new ArrayList<>();
         
@@ -1405,6 +1447,11 @@ public class HomeUI extends javax.swing.JFrame {
         delete_invoice_btn_lbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         delete_invoice_btn_lbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         delete_invoice_btn_lbl.setOpaque(true);
+        delete_invoice_btn_lbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                delete_invoice_btn_lblMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout delete_invoice_pnlLayout = new javax.swing.GroupLayout(delete_invoice_pnl);
         delete_invoice_pnl.setLayout(delete_invoice_pnlLayout);
@@ -1690,6 +1737,11 @@ public class HomeUI extends javax.swing.JFrame {
         delete_product_btn_lbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         delete_product_btn_lbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         delete_product_btn_lbl.setOpaque(true);
+        delete_product_btn_lbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                delete_product_btn_lblMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout delete_product_pnlLayout = new javax.swing.GroupLayout(delete_product_pnl);
         delete_product_pnl.setLayout(delete_product_pnlLayout);
@@ -2012,6 +2064,16 @@ public class HomeUI extends javax.swing.JFrame {
     private void delete_product_id_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_product_id_inputActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_delete_product_id_inputActionPerformed
+
+    private void delete_invoice_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_delete_invoice_btn_lblMouseClicked
+        int inv_id = Integer.parseInt(delete_invoice_id_input.getText());
+        this.delete_invoice(inv_id);
+    }//GEN-LAST:event_delete_invoice_btn_lblMouseClicked
+
+    private void delete_product_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_delete_product_btn_lblMouseClicked
+        int pdt_id = Integer.parseInt(delete_product_id_input.getText());
+        this.delete_product(pdt_id);
+    }//GEN-LAST:event_delete_product_btn_lblMouseClicked
  
     /**
      * @param args the command line arguments

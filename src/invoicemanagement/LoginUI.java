@@ -351,7 +351,7 @@ public class LoginUI extends javax.swing.JFrame {
         String username = username_input.getText();
         String password = String.valueOf(password_input.getPassword());
         
-        String query = "Select * FROM `inv_users` WHERE `uname` = ? AND `UPASS` = ?";
+        String query = "Select * FROM `inv_users` WHERE `uname` = ? AND `upass` = ?";
         
         try {
             
