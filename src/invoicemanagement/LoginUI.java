@@ -81,7 +81,7 @@ public class LoginUI extends javax.swing.JFrame {
         user_icon_lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         user_icon_lbl.setIcon(new javax.swing.ImageIcon(getClass().getResource("/invoicemanagement/User.png"))); // NOI18N
 
-        inv_mgmt_login_lbl.setFont(new java.awt.Font("Calibri", 0, 36)); // NOI18N
+        inv_mgmt_login_lbl.setFont(new java.awt.Font("Calibri", 0, 24)); // NOI18N
         inv_mgmt_login_lbl.setForeground(new java.awt.Color(255, 255, 255));
         inv_mgmt_login_lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         inv_mgmt_login_lbl.setText("Login");
@@ -91,7 +91,7 @@ public class LoginUI extends javax.swing.JFrame {
         sidebarLayout.setHorizontalGroup(
             sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(inv_mgmt_login_lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(user_icon_lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(user_icon_lbl, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
         );
         sidebarLayout.setVerticalGroup(
             sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -100,11 +100,11 @@ public class LoginUI extends javax.swing.JFrame {
                 .addComponent(user_icon_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(inv_mgmt_login_lbl)
-                .addContainerGap(194, Short.MAX_VALUE))
+                .addContainerGap(208, Short.MAX_VALUE))
         );
 
         login_pnl.add(sidebar);
-        sidebar.setBounds(0, 0, 260, 566);
+        sidebar.setBounds(0, 0, 260, 565);
 
         exit_pnl.setBackground(new java.awt.Color(0, 102, 204));
         exit_pnl.setPreferredSize(new java.awt.Dimension(40, 40));
@@ -369,8 +369,6 @@ public class LoginUI extends javax.swing.JFrame {
             } else {
                 error_lbl.setText("Incorrect Login Credentials!");
             }
-            
-            
         } catch (SQLException ex) {
             Logger.getLogger(LoginUI.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -93,6 +93,14 @@ public class HomeUI extends javax.swing.JFrame {
             rs = ps.executeQuery("SELECT LAST_INSERT_ID()");
             if(rs.next()) {
                 inv_id = rs.getInt(1);
+                add_customer_name_input.setText("");
+                add_customer_contact_number_input.setText("");
+                add_remarks_input.setText("");
+                add_invoice_date_input.setDate(new Date());
+                add_subtotal_input.setText("");
+                add_vat_amount_input.setText("");
+                add_st_amount_input.setText("");
+                add_inv_amt_input.setText("");
             } else {
                 JOptionPane.showMessageDialog(this, "Invoice not Found!");
             }
@@ -123,6 +131,19 @@ public class HomeUI extends javax.swing.JFrame {
             rs = ps.executeUpdate();
             if(rs > 0) {
                 JOptionPane.showMessageDialog(this, "Invoice Updated!");
+                update_invoice_number_input.setText("");
+                update_customer_name_input.setText("");
+                update_customer_contact_number_input.setText("");
+                update_remarks_input.setText("");
+                update_invoice_date_input.setDate(new Date());
+                update_subtotal_input.setText("");
+                update_vat_amount_input.setText("");
+                update_st_amount_input.setText("");
+                update_inv_amt_input.setText("");
+                update_qty_input.setText("");
+                update_unit_price_input.setText("");
+                update_invoice_pdt_total_amount_input.setText("");
+                update_invoice_product_combo_box.setSelectedIndex(-1);
             } else {
                 JOptionPane.showMessageDialog(this, "Invoice not Found!");
             }
@@ -145,8 +166,8 @@ public class HomeUI extends javax.swing.JFrame {
             ps.setInt(3, inv_id);
             
             rs = ps.executeUpdate();
-            if(rs > 0) {
-                JOptionPane.showMessageDialog(this, "Invoice Products Updated!");
+            if(rs < 1) {
+                JOptionPane.showMessageDialog(this, "No products stored within invoice!");
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, ex);
@@ -510,6 +531,7 @@ public class HomeUI extends javax.swing.JFrame {
         update_customer_contact_number_input = new javax.swing.JTextField();
         update_vat_percent_lbl1 = new javax.swing.JLabel();
         update_vat_percent_lbl2 = new javax.swing.JLabel();
+        update_vat_percent_lbl3 = new javax.swing.JLabel();
         delete_invoice_pnl = new javax.swing.JPanel();
         delete_invoice_id_lbl = new javax.swing.JLabel();
         delete_invoice_lbl = new javax.swing.JLabel();
@@ -691,7 +713,7 @@ public class HomeUI extends javax.swing.JFrame {
         sidebar_update_invoice_btn_lbl.setFont(new java.awt.Font("Calibri", 0, 20)); // NOI18N
         sidebar_update_invoice_btn_lbl.setForeground(new java.awt.Color(255, 255, 255));
         sidebar_update_invoice_btn_lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        sidebar_update_invoice_btn_lbl.setText("View / Update Invoice Details");
+        sidebar_update_invoice_btn_lbl.setText("View / Update Invoice");
         sidebar_update_invoice_btn_lbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         sidebar_update_invoice_btn_lbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         sidebar_update_invoice_btn_lbl.setOpaque(true);
@@ -755,7 +777,7 @@ public class HomeUI extends javax.swing.JFrame {
         sidebar_update_product_btn_lbl.setFont(new java.awt.Font("Calibri", 0, 20)); // NOI18N
         sidebar_update_product_btn_lbl.setForeground(new java.awt.Color(255, 255, 255));
         sidebar_update_product_btn_lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        sidebar_update_product_btn_lbl.setText("Update Product");
+        sidebar_update_product_btn_lbl.setText("View / Update Product");
         sidebar_update_product_btn_lbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         sidebar_update_product_btn_lbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         sidebar_update_product_btn_lbl.setOpaque(true);
@@ -835,7 +857,7 @@ public class HomeUI extends javax.swing.JFrame {
         );
 
         home_pnl.add(sidebar);
-        sidebar.setBounds(0, 0, 260, 587);
+        sidebar.setBounds(0, 0, 260, 585);
 
         content.setBackground(new java.awt.Color(255, 255, 255));
         content.setLayout(new java.awt.CardLayout());
@@ -899,7 +921,7 @@ public class HomeUI extends javax.swing.JFrame {
         add_remarks_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_remarks_lbl.setText("Remarks");
         add_invoice_pnl.add(add_remarks_lbl);
-        add_remarks_lbl.setBounds(550, 180, 49, 18);
+        add_remarks_lbl.setBounds(550, 180, 61, 17);
 
         add_inv_amt_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_invoice_pnl.add(add_inv_amt_input);
@@ -915,12 +937,12 @@ public class HomeUI extends javax.swing.JFrame {
         update_invoice_lbl1.setFont(new java.awt.Font("Calibri", 0, 24)); // NOI18N
         update_invoice_lbl1.setText("New Invoice");
         add_invoice_pnl.add(update_invoice_lbl1);
-        update_invoice_lbl1.setBounds(27, 12, 121, 30);
+        update_invoice_lbl1.setBounds(27, 12, 145, 29);
 
         add_subtotal_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_subtotal_lbl.setText("Subtotal (£)");
         add_invoice_pnl.add(add_subtotal_lbl);
-        add_subtotal_lbl.setBounds(550, 300, 70, 18);
+        add_subtotal_lbl.setBounds(550, 300, 70, 17);
 
         add_subtotal_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_subtotal_input.setEnabled(false);
@@ -930,17 +952,17 @@ public class HomeUI extends javax.swing.JFrame {
         add_vat_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_vat_lbl.setText("VAT");
         add_invoice_pnl.add(add_vat_lbl);
-        add_vat_lbl.setBounds(550, 340, 23, 18);
+        add_vat_lbl.setBounds(550, 340, 27, 17);
 
         add_product_name_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_product_name_lbl.setText("Product Name");
         add_invoice_pnl.add(add_product_name_lbl);
-        add_product_name_lbl.setBounds(27, 125, 81, 18);
+        add_product_name_lbl.setBounds(27, 125, 98, 17);
 
         add_cash_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_cash_lbl.setText("Invoice Amount (£)");
         add_invoice_pnl.add(add_cash_lbl);
-        add_cash_lbl.setBounds(550, 410, 120, 18);
+        add_cash_lbl.setBounds(550, 410, 120, 17);
 
         add_invoice_number_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_invoice_number_input.setEnabled(false);
@@ -960,17 +982,17 @@ public class HomeUI extends javax.swing.JFrame {
         add_qty_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_qty_lbl.setText("Qty");
         add_invoice_pnl.add(add_qty_lbl);
-        add_qty_lbl.setBounds(211, 125, 20, 18);
+        add_qty_lbl.setBounds(211, 125, 23, 17);
 
         add_invoice_number_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_invoice_number_lbl.setText("Invoice Number");
         add_invoice_pnl.add(add_invoice_number_lbl);
-        add_invoice_number_lbl.setBounds(27, 52, 89, 18);
+        add_invoice_number_lbl.setBounds(27, 52, 107, 17);
 
         add_vat_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_vat_percent_lbl.setText("%");
         add_invoice_pnl.add(add_vat_percent_lbl);
-        add_vat_percent_lbl.setBounds(660, 340, 10, 18);
+        add_vat_percent_lbl.setBounds(660, 340, 13, 17);
 
         add_qty_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_qty_input.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1001,7 +1023,7 @@ public class HomeUI extends javax.swing.JFrame {
         add_unit_price_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_unit_price_lbl.setText("Unit Price (£)");
         add_invoice_pnl.add(add_unit_price_lbl);
-        add_unit_price_lbl.setBounds(271, 125, 80, 18);
+        add_unit_price_lbl.setBounds(268, 125, 90, 17);
 
         add_invoice_product_combo_box.setBackground(new java.awt.Color(255, 255, 255));
         add_invoice_product_combo_box.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
@@ -1016,12 +1038,12 @@ public class HomeUI extends javax.swing.JFrame {
         add_invoice_customer_name.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_invoice_customer_name.setText("Customer Name");
         add_invoice_pnl.add(add_invoice_customer_name);
-        add_invoice_customer_name.setBounds(214, 52, 91, 18);
+        add_invoice_customer_name.setBounds(214, 52, 112, 17);
 
         add_service_tax_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_service_tax_lbl.setText("ST");
         add_invoice_pnl.add(add_service_tax_lbl);
-        add_service_tax_lbl.setBounds(550, 380, 13, 18);
+        add_service_tax_lbl.setBounds(550, 380, 18, 17);
 
         add_unit_price_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_unit_price_input.setEnabled(false);
@@ -1041,7 +1063,7 @@ public class HomeUI extends javax.swing.JFrame {
         add_total_amount_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_total_amount_lbl.setText("Total Amt. (£)");
         add_invoice_pnl.add(add_total_amount_lbl);
-        add_total_amount_lbl.setBounds(364, 125, 80, 18);
+        add_total_amount_lbl.setBounds(364, 125, 80, 17);
 
         add_invoice_date_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_invoice_pnl.add(add_invoice_date_input);
@@ -1050,7 +1072,7 @@ public class HomeUI extends javax.swing.JFrame {
         add_st_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_st_percent_lbl.setText("%");
         add_invoice_pnl.add(add_st_percent_lbl);
-        add_st_percent_lbl.setBounds(660, 380, 10, 18);
+        add_st_percent_lbl.setBounds(660, 380, 13, 17);
 
         add_invoice_pdt_total_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_invoice_pdt_total_amount_input.setEnabled(false);
@@ -1060,7 +1082,7 @@ public class HomeUI extends javax.swing.JFrame {
         add_invoice_date_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_invoice_date_lbl.setText("Invoice Date");
         add_invoice_pnl.add(add_invoice_date_lbl);
-        add_invoice_date_lbl.setBounds(550, 120, 71, 18);
+        add_invoice_date_lbl.setBounds(550, 120, 85, 17);
 
         add_st_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_st_amount_input.setEnabled(false);
@@ -1137,12 +1159,12 @@ public class HomeUI extends javax.swing.JFrame {
         add_product_details_lbl.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
         add_product_details_lbl.setText("Product Details");
         add_invoice_pnl.add(add_product_details_lbl);
-        add_product_details_lbl.setBounds(27, 100, 111, 23);
+        add_product_details_lbl.setBounds(27, 100, 134, 22);
 
         add_invoice_customer_phone.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_invoice_customer_phone.setText("Customer Contact Number");
         add_invoice_pnl.add(add_invoice_customer_phone);
-        add_invoice_customer_phone.setBounds(550, 52, 160, 18);
+        add_invoice_customer_phone.setBounds(550, 52, 200, 17);
 
         add_customer_contact_number_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_customer_contact_number_input.setAlignmentX(2.0F);
@@ -1154,12 +1176,12 @@ public class HomeUI extends javax.swing.JFrame {
         add_vat_percent_lbl1.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_vat_percent_lbl1.setText("£");
         add_invoice_pnl.add(add_vat_percent_lbl1);
-        add_vat_percent_lbl1.setBounds(742, 340, 7, 18);
+        add_vat_percent_lbl1.setBounds(742, 340, 9, 17);
 
         add_st_percent_lbl1.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         add_st_percent_lbl1.setText("£");
         add_invoice_pnl.add(add_st_percent_lbl1);
-        add_st_percent_lbl1.setBounds(742, 380, 7, 18);
+        add_st_percent_lbl1.setBounds(742, 380, 9, 17);
 
         content.add(add_invoice_pnl, "card3");
 
@@ -1185,7 +1207,7 @@ public class HomeUI extends javax.swing.JFrame {
         update_remarks_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_remarks_lbl.setText("Remarks");
         update_invoice_pnl.add(update_remarks_lbl);
-        update_remarks_lbl.setBounds(550, 180, 49, 18);
+        update_remarks_lbl.setBounds(550, 180, 61, 17);
 
         update_inv_amt_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_invoice_pnl.add(update_inv_amt_input);
@@ -1201,34 +1223,39 @@ public class HomeUI extends javax.swing.JFrame {
         update_invoice_lbl.setFont(new java.awt.Font("Calibri", 0, 24)); // NOI18N
         update_invoice_lbl.setText("Update Invoice");
         update_invoice_pnl.add(update_invoice_lbl);
-        update_invoice_lbl.setBounds(27, 12, 149, 30);
+        update_invoice_lbl.setBounds(27, 12, 178, 29);
 
         update_subtotal_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        update_subtotal_lbl.setText("Subtotal (£)");
+        update_subtotal_lbl.setText("Subtotal");
         update_invoice_pnl.add(update_subtotal_lbl);
-        update_subtotal_lbl.setBounds(550, 300, 80, 18);
+        update_subtotal_lbl.setBounds(550, 300, 70, 17);
 
         update_subtotal_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_subtotal_input.setEnabled(false);
         update_invoice_pnl.add(update_subtotal_input);
-        update_subtotal_input.setBounds(618, 290, 140, 30);
+        update_subtotal_input.setBounds(618, 290, 120, 30);
 
         update_vat_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_vat_lbl.setText("VAT");
         update_invoice_pnl.add(update_vat_lbl);
-        update_vat_lbl.setBounds(550, 340, 23, 18);
+        update_vat_lbl.setBounds(550, 340, 27, 17);
 
         update_product_name_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_product_name_lbl.setText("Product Name");
         update_invoice_pnl.add(update_product_name_lbl);
-        update_product_name_lbl.setBounds(27, 125, 81, 18);
+        update_product_name_lbl.setBounds(27, 125, 98, 17);
 
         update_cash_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_cash_lbl.setText("Invoice Amount (£)");
         update_invoice_pnl.add(update_cash_lbl);
-        update_cash_lbl.setBounds(550, 410, 120, 18);
+        update_cash_lbl.setBounds(550, 410, 120, 17);
 
         update_invoice_number_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        update_invoice_number_input.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                update_invoice_number_inputActionPerformed(evt);
+            }
+        });
         update_invoice_number_input.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 update_invoice_number_inputKeyReleased(evt);
@@ -1250,17 +1277,17 @@ public class HomeUI extends javax.swing.JFrame {
         update_qty_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_qty_lbl.setText("Qty");
         update_invoice_pnl.add(update_qty_lbl);
-        update_qty_lbl.setBounds(211, 125, 20, 18);
+        update_qty_lbl.setBounds(211, 125, 23, 17);
 
         update_invoice_number_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_invoice_number_lbl.setText("Invoice Number");
         update_invoice_pnl.add(update_invoice_number_lbl);
-        update_invoice_number_lbl.setBounds(27, 52, 89, 18);
+        update_invoice_number_lbl.setBounds(27, 52, 107, 17);
 
         update_vat_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_vat_percent_lbl.setText("£");
         update_invoice_pnl.add(update_vat_percent_lbl);
-        update_vat_percent_lbl.setBounds(742, 340, 7, 18);
+        update_vat_percent_lbl.setBounds(742, 340, 9, 17);
 
         update_qty_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_qty_input.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1275,6 +1302,11 @@ public class HomeUI extends javax.swing.JFrame {
         update_customer_name_input.setAlignmentX(2.0F);
         update_customer_name_input.setAlignmentY(2.0F);
         update_customer_name_input.setPreferredSize(null);
+        update_customer_name_input.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                update_customer_name_inputKeyReleased(evt);
+            }
+        });
         update_invoice_pnl.add(update_customer_name_input);
         update_customer_name_input.setBounds(214, 68, 310, 30);
 
@@ -1291,7 +1323,7 @@ public class HomeUI extends javax.swing.JFrame {
         update_unit_price_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_unit_price_lbl.setText("Unit Price (£)");
         update_invoice_pnl.add(update_unit_price_lbl);
-        update_unit_price_lbl.setBounds(271, 125, 80, 18);
+        update_unit_price_lbl.setBounds(271, 125, 80, 17);
 
         update_invoice_product_combo_box.setBackground(new java.awt.Color(255, 255, 255));
         update_invoice_product_combo_box.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
@@ -1306,12 +1338,12 @@ public class HomeUI extends javax.swing.JFrame {
         update_invoice_customer_name.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_invoice_customer_name.setText("Customer Name");
         update_invoice_pnl.add(update_invoice_customer_name);
-        update_invoice_customer_name.setBounds(214, 52, 91, 18);
+        update_invoice_customer_name.setBounds(214, 52, 112, 17);
 
         update_service_tax_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_service_tax_lbl.setText("ST");
         update_invoice_pnl.add(update_service_tax_lbl);
-        update_service_tax_lbl.setBounds(550, 380, 13, 18);
+        update_service_tax_lbl.setBounds(550, 380, 18, 17);
 
         update_unit_price_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_unit_price_input.setEnabled(false);
@@ -1331,7 +1363,7 @@ public class HomeUI extends javax.swing.JFrame {
         update_total_amount_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_total_amount_lbl.setText("Total Amt. (£)");
         update_invoice_pnl.add(update_total_amount_lbl);
-        update_total_amount_lbl.setBounds(364, 125, 100, 18);
+        update_total_amount_lbl.setBounds(364, 125, 100, 17);
 
         update_invoice_date_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_invoice_pnl.add(update_invoice_date_input);
@@ -1340,7 +1372,7 @@ public class HomeUI extends javax.swing.JFrame {
         update_st_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_st_percent_lbl.setText("%");
         update_invoice_pnl.add(update_st_percent_lbl);
-        update_st_percent_lbl.setBounds(670, 380, 10, 18);
+        update_st_percent_lbl.setBounds(670, 380, 13, 17);
 
         update_invoice_pdt_total_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_invoice_pdt_total_amount_input.setEnabled(false);
@@ -1350,7 +1382,7 @@ public class HomeUI extends javax.swing.JFrame {
         update_invoice_date_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_invoice_date_lbl.setText("Invoice Date");
         update_invoice_pnl.add(update_invoice_date_lbl);
-        update_invoice_date_lbl.setBounds(550, 120, 71, 18);
+        update_invoice_date_lbl.setBounds(550, 120, 85, 17);
 
         update_st_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_st_amount_input.setEnabled(false);
@@ -1427,12 +1459,12 @@ public class HomeUI extends javax.swing.JFrame {
         update_product_details_lbl1.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
         update_product_details_lbl1.setText("Product Details");
         update_invoice_pnl.add(update_product_details_lbl1);
-        update_product_details_lbl1.setBounds(27, 100, 111, 23);
+        update_product_details_lbl1.setBounds(27, 100, 134, 22);
 
         update_invoice_customer_phone.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_invoice_customer_phone.setText("Customer Contact Number");
         update_invoice_pnl.add(update_invoice_customer_phone);
-        update_invoice_customer_phone.setBounds(550, 52, 160, 18);
+        update_invoice_customer_phone.setBounds(550, 52, 160, 17);
 
         update_customer_contact_number_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_customer_contact_number_input.setAlignmentX(2.0F);
@@ -1444,12 +1476,17 @@ public class HomeUI extends javax.swing.JFrame {
         update_vat_percent_lbl1.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_vat_percent_lbl1.setText("%");
         update_invoice_pnl.add(update_vat_percent_lbl1);
-        update_vat_percent_lbl1.setBounds(670, 340, 10, 18);
+        update_vat_percent_lbl1.setBounds(670, 340, 13, 17);
 
         update_vat_percent_lbl2.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
         update_vat_percent_lbl2.setText("£");
         update_invoice_pnl.add(update_vat_percent_lbl2);
-        update_vat_percent_lbl2.setBounds(742, 380, 7, 18);
+        update_vat_percent_lbl2.setBounds(742, 382, 9, 17);
+
+        update_vat_percent_lbl3.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        update_vat_percent_lbl3.setText("£");
+        update_invoice_pnl.add(update_vat_percent_lbl3);
+        update_vat_percent_lbl3.setBounds(742, 302, 9, 17);
 
         content.add(update_invoice_pnl, "card3");
 
@@ -1500,7 +1537,7 @@ public class HomeUI extends javax.swing.JFrame {
                     .addGroup(delete_invoice_pnlLayout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addComponent(delete_invoice_lbl)))
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
         delete_invoice_pnlLayout.setVerticalGroup(
             delete_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1522,10 +1559,7 @@ public class HomeUI extends javax.swing.JFrame {
 
         product_list_tbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "Name", "Description", "Unit Price (£)", "Discount (£)"
@@ -1605,9 +1639,9 @@ public class HomeUI extends javax.swing.JFrame {
                                 .addComponent(pdt_unit_price_lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(add_product_pnlLayout.createSequentialGroup()
                                     .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(pdt_name_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(pdt_discount_lbl))
-                                    .addGap(22, 22, 22)))
+                                        .addComponent(pdt_discount_lbl)
+                                        .addComponent(pdt_name_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addGroup(add_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(pdt_name_input)
@@ -1699,6 +1733,11 @@ public class HomeUI extends javax.swing.JFrame {
         pdt_id_lbl.setText("ID");
 
         update_pdt_name_input.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        update_pdt_name_input.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                update_pdt_name_inputKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout update_product_pnlLayout = new javax.swing.GroupLayout(update_product_pnl);
         update_product_pnl.setLayout(update_product_pnlLayout);
@@ -1712,11 +1751,11 @@ public class HomeUI extends javax.swing.JFrame {
                     .addGroup(update_product_pnlLayout.createSequentialGroup()
                         .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pdt_id_lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(pdt_name_lbl3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(pdt_discount_lbl2)
                             .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(pdt_desc_lbl2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(pdt_unit_price_lbl2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(pdt_unit_price_lbl2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(pdt_name_lbl3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(16, 16, 16)
                         .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(update_pdt_name_input)
@@ -1724,7 +1763,7 @@ public class HomeUI extends javax.swing.JFrame {
                             .addComponent(update_pdt_unit_price_input, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(update_pdt_discount_input, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
                             .addComponent(update_pdt_desc_input))))
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
         update_product_pnlLayout.setVerticalGroup(
             update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1742,7 +1781,7 @@ public class HomeUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pdt_desc_lbl2)
-                    .addComponent(update_pdt_desc_input, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
+                    .addComponent(update_pdt_desc_input, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(update_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(update_pdt_unit_price_input, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1805,7 +1844,7 @@ public class HomeUI extends javax.swing.JFrame {
                     .addGroup(delete_product_pnlLayout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addComponent(delete_product_lbl)))
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         delete_product_pnlLayout.setVerticalGroup(
             delete_product_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2121,6 +2160,10 @@ public class HomeUI extends javax.swing.JFrame {
             if(rs > 0) {
                 JOptionPane.showMessageDialog(this, "Product added!");
                 this.sidebar_product_list_btn_lblMouseClicked(evt);
+                pdt_name_input.setText("");
+                pdt_desc_input.setText("");
+                pdt_unit_price_input.setText("");
+                pdt_discount_input.setText("");
             } else {
                 JOptionPane.showMessageDialog(this, "Product could not be added!");
             }
@@ -2183,6 +2226,11 @@ public class HomeUI extends javax.swing.JFrame {
             if(rs > 0) {
                 JOptionPane.showMessageDialog(this, "Product updated!");
                 this.sidebar_product_list_btn_lblMouseClicked(evt);
+                pdt_id_input.setText("");
+                update_pdt_name_input.setText("");
+                update_pdt_desc_input.setText("");
+                update_pdt_unit_price_input.setText("");
+                update_pdt_discount_input.setText("");
             } else {
                 JOptionPane.showMessageDialog(this, "Product could not be updated!");
             }
@@ -2291,6 +2339,8 @@ public class HomeUI extends javax.swing.JFrame {
             qty = Integer.parseInt(update_product_details_tbl.getValueAt(i, 3).toString());
             this.updateInvProduct(inv_id, pdt_id, qty);
         }
+        DefaultTableModel utm = (DefaultTableModel)update_product_details_tbl.getModel();
+        utm.setRowCount(0);
     }//GEN-LAST:event_update_invoice_btn_lblMouseClicked
 
     private void add_invoice_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_add_invoice_btn_lblMouseClicked
@@ -2311,6 +2361,8 @@ public class HomeUI extends javax.swing.JFrame {
             qty = Integer.parseInt(add_product_details_tbl.getValueAt(i, 3).toString());
             this.updateInvProduct(inv_id, pdt_id, qty);
         }
+        DefaultTableModel itm = (DefaultTableModel)add_product_details_tbl.getModel();
+        itm.setRowCount(0);
     }//GEN-LAST:event_add_invoice_btn_lblMouseClicked
 
     private void add_vat_percent_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_vat_percent_inputActionPerformed
@@ -2383,6 +2435,72 @@ public class HomeUI extends javax.swing.JFrame {
         ptm.addRow(row);
         this.add_inv_amounts();
     }//GEN-LAST:event_add_add_to_cart_btnActionPerformed
+
+    private void update_pdt_name_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_update_pdt_name_inputKeyReleased
+        if(update_pdt_name_input.getText() == null || update_pdt_name_input.getText().equals("")) {
+        } else {
+            String name = update_pdt_name_input.getText();
+            PreparedStatement ps;
+            ResultSet rs;
+            String queryInvoices = "SELECT * FROM `inv_products` WHERE `name` = ?";
+
+            try {
+
+                ps = DbConnection.getConnection().prepareStatement(queryInvoices);
+
+                ps.setString(1, name);
+
+                rs = ps.executeQuery();
+
+                while(rs.next()) {
+                    Product product = new Product(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getFloat("discount"), rs.getFloat("unit_price"));
+                    pdt_id_input.setText(Integer.toString(product.getid()));
+                    update_pdt_desc_input.setText(product.getdescription());
+                    update_pdt_unit_price_input.setText(Float.toString(product.getunitprice()));
+                    update_pdt_discount_input.setText(Float.toString(product.getdiscount()));
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, ex);
+            }
+        }
+    }//GEN-LAST:event_update_pdt_name_inputKeyReleased
+
+    private void update_invoice_number_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_update_invoice_number_inputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_update_invoice_number_inputActionPerformed
+
+    private void update_customer_name_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_update_customer_name_inputKeyReleased
+        if(update_customer_name_input.getText() == null || update_customer_name_input.getText().equals("")) {
+        } else {
+            String name = update_customer_name_input.getText();
+            PreparedStatement ps;
+            ResultSet rs;
+            String queryInvoices = "SELECT * FROM `inv_invoices` WHERE `customer` = ?";
+
+            try {
+                ps = DbConnection.getConnection().prepareStatement(queryInvoices);
+
+                ps.setString(1, name);
+
+                rs = ps.executeQuery();
+
+                while(rs.next()) {
+                    Invoice invoice = new Invoice(rs.getInt("id"), rs.getString("customer"), rs.getString("customer_contact_number"), rs.getString("remarks"), rs.getDate("inv_date"), rs.getFloat("subtotal"), rs.getFloat("vat"), rs.getFloat("service_tax"), rs.getFloat("inv_amt"));
+                    update_invoice_number_input.setText(Integer.toString(invoice.getid()));
+                    update_customer_contact_number_input.setText(invoice.getcustomercontactnumber());
+                    update_invoice_date_input.setDate(invoice.getinvdate());
+                    update_remarks_input.setText(invoice.getremarks());
+                    update_subtotal_input.setText(Float.toString(invoice.getsubtotal()));
+                    update_vat_amount_input.setText(Float.toString(invoice.getvat()));
+                    update_st_amount_input.setText(Float.toString(invoice.getservicetax()));
+                    update_inv_amt_input.setText(Float.toString(invoice.getinv_amt()));
+                    this.get_inv_products(invoice.getid());
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, ex);
+            }
+        }
+    }//GEN-LAST:event_update_customer_name_inputKeyReleased
  
     /**
      * @param args the command line arguments
@@ -2566,6 +2684,7 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JLabel update_vat_percent_lbl;
     private javax.swing.JLabel update_vat_percent_lbl1;
     private javax.swing.JLabel update_vat_percent_lbl2;
+    private javax.swing.JLabel update_vat_percent_lbl3;
     private javax.swing.JLabel user_login_heading_lbl;
     // End of variables declaration//GEN-END:variables
 
