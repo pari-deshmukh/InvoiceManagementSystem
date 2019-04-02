@@ -691,7 +691,7 @@ public class HomeUI extends javax.swing.JFrame {
         sidebar_update_invoice_btn_lbl.setFont(new java.awt.Font("Calibri", 0, 20)); // NOI18N
         sidebar_update_invoice_btn_lbl.setForeground(new java.awt.Color(255, 255, 255));
         sidebar_update_invoice_btn_lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        sidebar_update_invoice_btn_lbl.setText("Update Invoice");
+        sidebar_update_invoice_btn_lbl.setText("View / Update Invoice Details");
         sidebar_update_invoice_btn_lbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         sidebar_update_invoice_btn_lbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         sidebar_update_invoice_btn_lbl.setOpaque(true);
