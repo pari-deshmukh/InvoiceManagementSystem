@@ -71,6 +71,36 @@ public class HomeUI extends javax.swing.JFrame {
             itm.addRow(row);
         }
     }
+    
+    private int addInvoice(String cust_name, String cust_contact, String remarks, Date inv_date, float subtotal, float vat, float st, float inv_amt) {
+        PreparedStatement ps;
+        ResultSet rs;
+        String updateInvoice = "INSERT INTO `inv_invoices` (customer, customer_contact_number, remarks, inv_date, subtotal, vat, service_tax, inv_amt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        int inv_id = -1;
+        try {
+            ps = DbConnection.getConnection().prepareStatement(updateInvoice);
+            
+            ps.setString(1, cust_name);
+            ps.setString(2, cust_contact);
+            ps.setString(3, remarks);
+            ps.setObject(4, inv_date);
+            ps.setFloat(5, subtotal);
+            ps.setFloat(6, vat);
+            ps.setFloat(7, st);
+            ps.setFloat(8, inv_amt);
+            
+            ps.executeUpdate();
+            rs = ps.executeQuery("SELECT LAST_INSERT_ID()");
+            if(rs.next()) {
+                inv_id = rs.getInt(1);
+            } else {
+                JOptionPane.showMessageDialog(this, "Invoice not Found!");
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+        return inv_id;
+    }
 
     private void updateInvoice(int inv_id, String cust_name, String cust_contact, String remarks, Date inv_date, float subtotal, float vat, float st, float inv_amt) {
         PreparedStatement ps;
@@ -233,7 +263,7 @@ public class HomeUI extends javax.swing.JFrame {
         ArrayList<Product> pdt_list = productList();
         DefaultTableModel ptm = (DefaultTableModel)product_list_tbl.getModel();
         ptm.setRowCount(0);
-        invoice_product_combo_box.removeAllItems();
+        add_invoice_product_combo_box.removeAllItems();
         update_invoice_product_combo_box.removeAllItems();
         Object[] row = new Object[5];
         for (int i=0;i<pdt_list.size();i++) {
@@ -243,7 +273,7 @@ public class HomeUI extends javax.swing.JFrame {
             row[3] = pdt_list.get(i).getunitprice();
             row[4] = pdt_list.get(i).getdiscount();
             ptm.addRow(row);
-            invoice_product_combo_box.addItem(pdt_list.get(i).getname());
+            add_invoice_product_combo_box.addItem(pdt_list.get(i).getname());
             update_invoice_product_combo_box.addItem(pdt_list.get(i).getname());
         }
     }
@@ -305,6 +335,25 @@ public class HomeUI extends javax.swing.JFrame {
             row[5] = (inv_pdt_list.get(i).getunitprice() - inv_pdt_list.get(i).getdiscount()) * inv_pdt_list.get(i).getqty();
             iptm.addRow(row);
         }
+    }
+
+    private void add_inv_amounts() {
+        DefaultTableModel iptm = (DefaultTableModel)add_product_details_tbl.getModel();
+        float subtotal = 0;
+        float vat = 0;
+        float st = 0;
+        float inv_amt = 0;
+        for (int i = 0; i < iptm.getRowCount(); i++) {
+            subtotal += Float.parseFloat(iptm.getValueAt(i, 5).toString());
+        }
+        vat = (Float.parseFloat(add_vat_percent_input.getText())/100) * subtotal;
+        st = (Float.parseFloat(add_st_percent_input.getText())/100) * subtotal;
+        inv_amt = subtotal + vat + st;
+        add_subtotal_input.setText(String.format("%.2f",subtotal));
+        add_vat_amount_input.setText(String.format("%.2f",vat));
+        add_st_amount_input.setText(String.format("%.2f",st));
+        add_inv_amt_input.setText(String.format("%.2f",inv_amt));
+        
     }
 
     private void update_inv_amounts() {
@@ -380,47 +429,44 @@ public class HomeUI extends javax.swing.JFrame {
         invoice_list_scrl_pane = new javax.swing.JScrollPane();
         invoice_list_tbl = new javax.swing.JTable();
         add_invoice_pnl = new javax.swing.JPanel();
-        create_invoice_lbl = new javax.swing.JLabel();
-        invoice_number_input = new javax.swing.JTextField();
-        invoice_number_lbl = new javax.swing.JLabel();
-        customer_name_input = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        invoice_date_input = new com.toedter.calendar.JDateChooser();
-        invoice_date_lbl = new javax.swing.JLabel();
-        product_details_scrl_pane = new javax.swing.JScrollPane();
-        product_details_tbl = new javax.swing.JTable();
-        product_details_lbl = new javax.swing.JLabel();
-        remarks_lbl = new javax.swing.JLabel();
-        remarks_scrl_pane = new javax.swing.JScrollPane();
-        remarks_input = new javax.swing.JTextPane();
-        subtotal_lbl = new javax.swing.JLabel();
-        subtotal_input = new javax.swing.JTextField();
-        vat_lbl = new javax.swing.JLabel();
-        discount_lbl = new javax.swing.JLabel();
-        cash_lbl = new javax.swing.JLabel();
-        vat_percent_input = new javax.swing.JTextField();
-        vat_percent_lbl = new javax.swing.JLabel();
-        vat_amount_input = new javax.swing.JTextField();
-        service_tax_lbl = new javax.swing.JLabel();
-        st_percent_input = new javax.swing.JTextField();
-        st_percent_lbl = new javax.swing.JLabel();
-        st_amount_input = new javax.swing.JTextField();
-        discount_percent_input = new javax.swing.JTextField();
-        discount_percent_lbl = new javax.swing.JLabel();
-        discount_amount_input = new javax.swing.JTextField();
-        cash_input = new javax.swing.JTextField();
-        change_lbl = new javax.swing.JLabel();
-        change_input = new javax.swing.JTextField();
-        product_name_lbl = new javax.swing.JLabel();
-        qty_lbl = new javax.swing.JLabel();
-        qty_input = new javax.swing.JTextField();
-        unit_price_lbl = new javax.swing.JLabel();
-        unit_price_input = new javax.swing.JTextField();
-        total_amount_lbl = new javax.swing.JLabel();
-        unit_price_input1 = new javax.swing.JTextField();
-        add_to_cart_btn = new javax.swing.JButton();
-        invoice_product_combo_box = new javax.swing.JComboBox<>();
-        save_product_btn_lbl1 = new javax.swing.JLabel();
+        add_invoice_btn_lbl = new javax.swing.JLabel();
+        add_remarks_lbl = new javax.swing.JLabel();
+        add_inv_amt_input = new javax.swing.JTextField();
+        remarks_scrl_pane2 = new javax.swing.JScrollPane();
+        add_remarks_input = new javax.swing.JTextPane();
+        update_invoice_lbl1 = new javax.swing.JLabel();
+        add_subtotal_lbl = new javax.swing.JLabel();
+        add_subtotal_input = new javax.swing.JTextField();
+        add_vat_lbl = new javax.swing.JLabel();
+        add_product_name_lbl = new javax.swing.JLabel();
+        add_cash_lbl = new javax.swing.JLabel();
+        add_invoice_number_input = new javax.swing.JTextField();
+        add_vat_percent_input = new javax.swing.JTextField();
+        add_qty_lbl = new javax.swing.JLabel();
+        add_invoice_number_lbl = new javax.swing.JLabel();
+        add_vat_percent_lbl = new javax.swing.JLabel();
+        add_qty_input = new javax.swing.JTextField();
+        add_customer_name_input = new javax.swing.JTextField();
+        add_vat_amount_input = new javax.swing.JTextField();
+        add_unit_price_lbl = new javax.swing.JLabel();
+        add_invoice_product_combo_box = new javax.swing.JComboBox<>();
+        add_invoice_customer_name = new javax.swing.JLabel();
+        add_service_tax_lbl = new javax.swing.JLabel();
+        add_unit_price_input = new javax.swing.JTextField();
+        add_st_percent_input = new javax.swing.JTextField();
+        add_total_amount_lbl = new javax.swing.JLabel();
+        add_invoice_date_input = new com.toedter.calendar.JDateChooser();
+        add_st_percent_lbl = new javax.swing.JLabel();
+        add_invoice_pdt_total_amount_input = new javax.swing.JTextField();
+        add_invoice_date_lbl = new javax.swing.JLabel();
+        add_st_amount_input = new javax.swing.JTextField();
+        add_delete_from_cart_btn = new javax.swing.JButton();
+        product_details_scrl_pane2 = new javax.swing.JScrollPane();
+        add_product_details_tbl = new javax.swing.JTable();
+        add_add_to_cart_btn = new javax.swing.JButton();
+        add_product_details_lbl = new javax.swing.JLabel();
+        add_invoice_customer_phone = new javax.swing.JLabel();
+        add_customer_contact_number_input = new javax.swing.JTextField();
         update_invoice_pnl = new javax.swing.JPanel();
         update_invoice_btn_lbl = new javax.swing.JLabel();
         update_remarks_lbl = new javax.swing.JLabel();
@@ -828,46 +874,218 @@ public class HomeUI extends javax.swing.JFrame {
         content.add(invoice_list_scrl_pane, "card3");
 
         add_invoice_pnl.setBackground(new java.awt.Color(255, 255, 255));
+        add_invoice_pnl.setLayout(null);
 
-        create_invoice_lbl.setBackground(new java.awt.Color(255, 255, 255));
-        create_invoice_lbl.setFont(new java.awt.Font("Calibri", 0, 24)); // NOI18N
-        create_invoice_lbl.setText("New Invoice");
+        add_invoice_btn_lbl.setBackground(new java.awt.Color(0, 102, 204));
+        add_invoice_btn_lbl.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        add_invoice_btn_lbl.setForeground(new java.awt.Color(255, 255, 255));
+        add_invoice_btn_lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        add_invoice_btn_lbl.setText("Submit");
+        add_invoice_btn_lbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        add_invoice_btn_lbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        add_invoice_btn_lbl.setOpaque(true);
+        add_invoice_btn_lbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                add_invoice_btn_lblMouseClicked(evt);
+            }
+        });
+        add_invoice_pnl.add(add_invoice_btn_lbl);
+        add_invoice_btn_lbl.setBounds(27, 462, 167, 31);
 
-        invoice_number_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        invoice_number_input.setEnabled(false);
+        add_remarks_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_remarks_lbl.setText("Remarks");
+        add_invoice_pnl.add(add_remarks_lbl);
+        add_remarks_lbl.setBounds(550, 180, 49, 18);
 
-        invoice_number_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        invoice_number_lbl.setText("Invoice Number");
+        add_inv_amt_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_pnl.add(add_inv_amt_input);
+        add_inv_amt_input.setBounds(550, 426, 210, 30);
 
-        customer_name_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_remarks_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        remarks_scrl_pane2.setViewportView(add_remarks_input);
 
-        jLabel1.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        jLabel1.setText("Customer Name");
+        add_invoice_pnl.add(remarks_scrl_pane2);
+        remarks_scrl_pane2.setBounds(550, 200, 210, 80);
 
-        invoice_date_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        update_invoice_lbl1.setBackground(new java.awt.Color(255, 255, 255));
+        update_invoice_lbl1.setFont(new java.awt.Font("Calibri", 0, 24)); // NOI18N
+        update_invoice_lbl1.setText("New Invoice");
+        add_invoice_pnl.add(update_invoice_lbl1);
+        update_invoice_lbl1.setBounds(27, 12, 121, 30);
 
-        invoice_date_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        invoice_date_lbl.setText("Invoice Date");
+        add_subtotal_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_subtotal_lbl.setText("Subtotal");
+        add_invoice_pnl.add(add_subtotal_lbl);
+        add_subtotal_lbl.setBounds(550, 300, 47, 18);
 
-        product_details_tbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        product_details_tbl.setModel(new javax.swing.table.DefaultTableModel(
+        add_subtotal_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_subtotal_input.setEnabled(false);
+        add_invoice_pnl.add(add_subtotal_input);
+        add_subtotal_input.setBounds(610, 290, 148, 30);
+
+        add_vat_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_vat_lbl.setText("VAT");
+        add_invoice_pnl.add(add_vat_lbl);
+        add_vat_lbl.setBounds(550, 340, 23, 18);
+
+        add_product_name_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_product_name_lbl.setText("Product Name");
+        add_invoice_pnl.add(add_product_name_lbl);
+        add_product_name_lbl.setBounds(27, 125, 81, 18);
+
+        add_cash_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_cash_lbl.setText("Invoice Amount");
+        add_invoice_pnl.add(add_cash_lbl);
+        add_cash_lbl.setBounds(550, 410, 100, 18);
+
+        add_invoice_number_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_number_input.setEnabled(false);
+        add_invoice_pnl.add(add_invoice_number_input);
+        add_invoice_number_input.setBounds(27, 68, 164, 30);
+
+        add_vat_percent_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_vat_percent_input.setText("20");
+        add_vat_percent_input.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                add_vat_percent_inputActionPerformed(evt);
+            }
+        });
+        add_invoice_pnl.add(add_vat_percent_input);
+        add_vat_percent_input.setBounds(610, 330, 50, 30);
+
+        add_qty_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_qty_lbl.setText("Qty");
+        add_invoice_pnl.add(add_qty_lbl);
+        add_qty_lbl.setBounds(211, 125, 20, 18);
+
+        add_invoice_number_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_number_lbl.setText("Invoice Number");
+        add_invoice_pnl.add(add_invoice_number_lbl);
+        add_invoice_number_lbl.setBounds(27, 52, 89, 18);
+
+        add_vat_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_vat_percent_lbl.setText("%");
+        add_invoice_pnl.add(add_vat_percent_lbl);
+        add_vat_percent_lbl.setBounds(660, 340, 10, 18);
+
+        add_qty_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_qty_input.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                add_qty_inputKeyReleased(evt);
+            }
+        });
+        add_invoice_pnl.add(add_qty_input);
+        add_qty_input.setBounds(209, 140, 50, 30);
+
+        add_customer_name_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_customer_name_input.setAlignmentX(2.0F);
+        add_customer_name_input.setAlignmentY(2.0F);
+        add_customer_name_input.setPreferredSize(null);
+        add_invoice_pnl.add(add_customer_name_input);
+        add_customer_name_input.setBounds(214, 68, 310, 30);
+
+        add_vat_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_vat_amount_input.setEnabled(false);
+        add_vat_amount_input.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                add_vat_amount_inputActionPerformed(evt);
+            }
+        });
+        add_invoice_pnl.add(add_vat_amount_input);
+        add_vat_amount_input.setBounds(690, 330, 66, 30);
+
+        add_unit_price_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_unit_price_lbl.setText("Unit Price");
+        add_invoice_pnl.add(add_unit_price_lbl);
+        add_unit_price_lbl.setBounds(271, 125, 55, 18);
+
+        add_invoice_product_combo_box.setBackground(new java.awt.Color(255, 255, 255));
+        add_invoice_product_combo_box.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_product_combo_box.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                add_invoice_product_combo_boxActionPerformed(evt);
+            }
+        });
+        add_invoice_pnl.add(add_invoice_product_combo_box);
+        add_invoice_product_combo_box.setBounds(27, 140, 164, 30);
+
+        add_invoice_customer_name.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_customer_name.setText("Customer Name");
+        add_invoice_pnl.add(add_invoice_customer_name);
+        add_invoice_customer_name.setBounds(214, 52, 91, 18);
+
+        add_service_tax_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_service_tax_lbl.setText("ST");
+        add_invoice_pnl.add(add_service_tax_lbl);
+        add_service_tax_lbl.setBounds(550, 380, 13, 18);
+
+        add_unit_price_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_unit_price_input.setEnabled(false);
+        add_invoice_pnl.add(add_unit_price_input);
+        add_unit_price_input.setBounds(271, 140, 81, 30);
+
+        add_st_percent_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_st_percent_input.setText("4");
+        add_st_percent_input.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                add_st_percent_inputActionPerformed(evt);
+            }
+        });
+        add_invoice_pnl.add(add_st_percent_input);
+        add_st_percent_input.setBounds(610, 370, 50, 30);
+
+        add_total_amount_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_total_amount_lbl.setText("Total Amount");
+        add_invoice_pnl.add(add_total_amount_lbl);
+        add_total_amount_lbl.setBounds(364, 125, 77, 18);
+
+        add_invoice_date_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_pnl.add(add_invoice_date_input);
+        add_invoice_date_input.setBounds(550, 140, 207, 30);
+
+        add_st_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_st_percent_lbl.setText("%");
+        add_invoice_pnl.add(add_st_percent_lbl);
+        add_st_percent_lbl.setBounds(660, 380, 10, 18);
+
+        add_invoice_pdt_total_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_pdt_total_amount_input.setEnabled(false);
+        add_invoice_pnl.add(add_invoice_pdt_total_amount_input);
+        add_invoice_pdt_total_amount_input.setBounds(364, 140, 80, 30);
+
+        add_invoice_date_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_date_lbl.setText("Invoice Date");
+        add_invoice_pnl.add(add_invoice_date_lbl);
+        add_invoice_date_lbl.setBounds(550, 120, 71, 18);
+
+        add_st_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_st_amount_input.setEnabled(false);
+        add_st_amount_input.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                add_st_amount_inputActionPerformed(evt);
+            }
+        });
+        add_invoice_pnl.add(add_st_amount_input);
+        add_st_amount_input.setBounds(690, 370, 66, 30);
+
+        add_delete_from_cart_btn.setBackground(new java.awt.Color(255, 255, 255));
+        add_delete_from_cart_btn.setFont(new java.awt.Font("Calibri", 1, 18)); // NOI18N
+        add_delete_from_cart_btn.setForeground(new java.awt.Color(0, 102, 204));
+        add_delete_from_cart_btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/invoicemanagement/delete.png"))); // NOI18N
+        add_delete_from_cart_btn.setBorder(null);
+        add_delete_from_cart_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        add_delete_from_cart_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                add_delete_from_cart_btnActionPerformed(evt);
+            }
+        });
+        add_invoice_pnl.add(add_delete_from_cart_btn);
+        add_delete_from_cart_btn.setBounds(450, 140, 30, 30);
+
+        add_product_details_tbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_product_details_tbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "Name", "Unit Price", "Qty", "Discount", "Total Amount"
@@ -881,336 +1099,53 @@ public class HomeUI extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        product_details_scrl_pane.setViewportView(product_details_tbl);
-        if (product_details_tbl.getColumnModel().getColumnCount() > 0) {
-            product_details_tbl.getColumnModel().getColumn(0).setPreferredWidth(30);
-            product_details_tbl.getColumnModel().getColumn(1).setPreferredWidth(130);
-            product_details_tbl.getColumnModel().getColumn(2).setPreferredWidth(50);
-            product_details_tbl.getColumnModel().getColumn(3).setPreferredWidth(30);
-            product_details_tbl.getColumnModel().getColumn(4).setPreferredWidth(50);
+        add_product_details_tbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                add_product_details_tblMouseClicked(evt);
+            }
+        });
+        product_details_scrl_pane2.setViewportView(add_product_details_tbl);
+        if (add_product_details_tbl.getColumnModel().getColumnCount() > 0) {
+            add_product_details_tbl.getColumnModel().getColumn(0).setPreferredWidth(30);
+            add_product_details_tbl.getColumnModel().getColumn(1).setPreferredWidth(130);
+            add_product_details_tbl.getColumnModel().getColumn(2).setPreferredWidth(50);
+            add_product_details_tbl.getColumnModel().getColumn(3).setPreferredWidth(30);
+            add_product_details_tbl.getColumnModel().getColumn(4).setPreferredWidth(50);
         }
 
-        product_details_lbl.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
-        product_details_lbl.setText("Product Details");
+        add_invoice_pnl.add(product_details_scrl_pane2);
+        product_details_scrl_pane2.setBounds(27, 177, 488, 279);
 
-        remarks_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        remarks_lbl.setText("Remarks");
-
-        remarks_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        remarks_scrl_pane.setViewportView(remarks_input);
-
-        subtotal_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        subtotal_lbl.setText("Subtotal");
-
-        subtotal_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        subtotal_input.setEnabled(false);
-
-        vat_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        vat_lbl.setText("VAT");
-
-        discount_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        discount_lbl.setText("Discount");
-
-        cash_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        cash_lbl.setText("Cash");
-
-        vat_percent_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        vat_percent_input.addActionListener(new java.awt.event.ActionListener() {
+        add_add_to_cart_btn.setBackground(new java.awt.Color(255, 255, 255));
+        add_add_to_cart_btn.setFont(new java.awt.Font("Calibri", 1, 18)); // NOI18N
+        add_add_to_cart_btn.setForeground(new java.awt.Color(0, 102, 204));
+        add_add_to_cart_btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/invoicemanagement/cart.png"))); // NOI18N
+        add_add_to_cart_btn.setBorder(null);
+        add_add_to_cart_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        add_add_to_cart_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                vat_percent_inputActionPerformed(evt);
+                add_add_to_cart_btnActionPerformed(evt);
             }
         });
+        add_invoice_pnl.add(add_add_to_cart_btn);
+        add_add_to_cart_btn.setBounds(485, 140, 30, 30);
 
-        vat_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        vat_percent_lbl.setText("%");
+        add_product_details_lbl.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
+        add_product_details_lbl.setText("Product Details");
+        add_invoice_pnl.add(add_product_details_lbl);
+        add_product_details_lbl.setBounds(27, 100, 111, 23);
 
-        vat_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        vat_amount_input.setEnabled(false);
-        vat_amount_input.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                vat_amount_inputActionPerformed(evt);
-            }
-        });
+        add_invoice_customer_phone.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_invoice_customer_phone.setText("Customer Contact Number");
+        add_invoice_pnl.add(add_invoice_customer_phone);
+        add_invoice_customer_phone.setBounds(550, 52, 160, 18);
 
-        service_tax_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        service_tax_lbl.setText("ST");
-
-        st_percent_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        st_percent_input.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                st_percent_inputActionPerformed(evt);
-            }
-        });
-
-        st_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        st_percent_lbl.setText("%");
-
-        st_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        st_amount_input.setEnabled(false);
-        st_amount_input.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                st_amount_inputActionPerformed(evt);
-            }
-        });
-
-        discount_percent_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        discount_percent_input.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                discount_percent_inputActionPerformed(evt);
-            }
-        });
-
-        discount_percent_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        discount_percent_lbl.setText("%");
-
-        discount_amount_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        discount_amount_input.setEnabled(false);
-        discount_amount_input.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                discount_amount_inputActionPerformed(evt);
-            }
-        });
-
-        cash_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-
-        change_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        change_lbl.setText("Change");
-
-        change_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        change_input.setEnabled(false);
-
-        product_name_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        product_name_lbl.setText("Product Name");
-
-        qty_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        qty_lbl.setText("Qty");
-
-        qty_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-
-        unit_price_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        unit_price_lbl.setText("Unit Price");
-
-        unit_price_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        unit_price_input.setEnabled(false);
-
-        total_amount_lbl.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        total_amount_lbl.setText("Total Amount");
-
-        unit_price_input1.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-        unit_price_input1.setEnabled(false);
-
-        add_to_cart_btn.setBackground(new java.awt.Color(255, 255, 255));
-        add_to_cart_btn.setFont(new java.awt.Font("Calibri", 1, 18)); // NOI18N
-        add_to_cart_btn.setForeground(new java.awt.Color(0, 102, 204));
-        add_to_cart_btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/invoicemanagement/cart.png"))); // NOI18N
-        add_to_cart_btn.setBorder(null);
-        add_to_cart_btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        add_to_cart_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                add_to_cart_btnActionPerformed(evt);
-            }
-        });
-
-        invoice_product_combo_box.setBackground(new java.awt.Color(255, 255, 255));
-        invoice_product_combo_box.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
-
-        save_product_btn_lbl1.setBackground(new java.awt.Color(0, 102, 204));
-        save_product_btn_lbl1.setFont(new java.awt.Font("Calibri", 0, 18)); // NOI18N
-        save_product_btn_lbl1.setForeground(new java.awt.Color(255, 255, 255));
-        save_product_btn_lbl1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        save_product_btn_lbl1.setText("Save");
-        save_product_btn_lbl1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        save_product_btn_lbl1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        save_product_btn_lbl1.setOpaque(true);
-
-        javax.swing.GroupLayout add_invoice_pnlLayout = new javax.swing.GroupLayout(add_invoice_pnl);
-        add_invoice_pnl.setLayout(add_invoice_pnlLayout);
-        add_invoice_pnlLayout.setHorizontalGroup(
-            add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
-                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                        .addComponent(save_product_btn_lbl1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                        .addComponent(create_invoice_lbl)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                        .addComponent(invoice_number_lbl)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                        .addComponent(invoice_number_input, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, add_invoice_pnlLayout.createSequentialGroup()
-                                        .addComponent(customer_name_input, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(15, 15, 15))
-                                    .addComponent(jLabel1)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, add_invoice_pnlLayout.createSequentialGroup()
-                                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(product_details_lbl, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(product_details_scrl_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                                .addComponent(product_name_lbl)
-                                                .addGap(53, 53, 53))
-                                            .addComponent(invoice_product_combo_box, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, add_invoice_pnlLayout.createSequentialGroup()
-                                                .addGap(20, 20, 20)
-                                                .addComponent(qty_lbl)
-                                                .addGap(40, 40, 40)
-                                                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                    .addComponent(unit_price_lbl)
-                                                    .addComponent(unit_price_input, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(total_amount_lbl)
-                                                    .addComponent(unit_price_input1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(12, 12, 12))
-                                            .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                                .addGap(18, 18, 18)
-                                                .addComponent(qty_input, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                        .addComponent(add_to_cart_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(24, 24, 24)))
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(invoice_date_input, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(remarks_scrl_pane)
-                                .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                    .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(subtotal_lbl)
-                                        .addComponent(vat_lbl))
-                                    .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(subtotal_input))
-                                        .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                            .addGap(14, 14, 14)
-                                            .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                                    .addComponent(st_percent_input, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(2, 2, 2)
-                                                    .addComponent(st_percent_lbl)
-                                                    .addGap(18, 18, 18)
-                                                    .addComponent(st_amount_input, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE))
-                                                .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                                    .addComponent(vat_percent_input, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(2, 2, 2)
-                                                    .addComponent(vat_percent_lbl)
-                                                    .addGap(18, 18, 18)
-                                                    .addComponent(vat_amount_input))))))
-                                .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                    .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(service_tax_lbl)
-                                        .addComponent(discount_lbl)
-                                        .addComponent(change_lbl))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(cash_input)
-                                        .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                            .addComponent(discount_percent_input, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(2, 2, 2)
-                                            .addComponent(discount_percent_lbl)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(discount_amount_input))
-                                        .addComponent(change_input)))
-                                .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                                    .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(invoice_date_lbl)
-                                        .addComponent(remarks_lbl))
-                                    .addGap(0, 0, Short.MAX_VALUE)))
-                            .addComponent(cash_lbl))
-                        .addGap(39, 39, 39))))
-        );
-        add_invoice_pnlLayout.setVerticalGroup(
-            add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(create_invoice_lbl)
-                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                        .addComponent(invoice_date_lbl)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(invoice_date_input, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, add_invoice_pnlLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(invoice_number_lbl)
-                            .addComponent(jLabel1))
-                        .addGap(2, 2, 2)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(invoice_number_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(customer_name_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(10, 10, 10)
-                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                        .addComponent(remarks_lbl)
-                        .addGap(0, 0, 0)
-                        .addComponent(remarks_scrl_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(subtotal_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(subtotal_lbl))
-                        .addGap(18, 18, 18)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(vat_lbl)
-                            .addComponent(vat_percent_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(vat_percent_lbl)
-                            .addComponent(vat_amount_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(service_tax_lbl)
-                            .addComponent(st_percent_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(st_percent_lbl)
-                            .addComponent(st_amount_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(16, 16, 16)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(discount_lbl)
-                            .addComponent(discount_percent_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(discount_percent_lbl)
-                            .addComponent(discount_amount_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cash_lbl)
-                            .addComponent(cash_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(15, 15, 15)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(change_lbl)
-                            .addComponent(change_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(add_invoice_pnlLayout.createSequentialGroup()
-                        .addComponent(product_details_lbl)
-                        .addGap(5, 5, 5)
-                        .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(product_name_lbl)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, add_invoice_pnlLayout.createSequentialGroup()
-                                .addComponent(qty_lbl)
-                                .addGap(2, 2, 2)
-                                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(qty_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(invoice_product_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, add_invoice_pnlLayout.createSequentialGroup()
-                                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(unit_price_lbl)
-                                    .addComponent(total_amount_lbl))
-                                .addGap(2, 2, 2)
-                                .addGroup(add_invoice_pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(unit_price_input, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(unit_price_input1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(add_to_cart_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(product_details_scrl_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(save_product_btn_lbl1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
-        );
+        add_customer_contact_number_input.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        add_customer_contact_number_input.setAlignmentX(2.0F);
+        add_customer_contact_number_input.setAlignmentY(2.0F);
+        add_customer_contact_number_input.setPreferredSize(null);
+        add_invoice_pnl.add(add_customer_contact_number_input);
+        add_customer_contact_number_input.setBounds(550, 68, 210, 30);
 
         content.add(add_invoice_pnl, "card3");
 
@@ -1996,34 +1931,6 @@ public class HomeUI extends javax.swing.JFrame {
         delete_product_pnl.setVisible(true);
     }//GEN-LAST:event_sidebar_delete_product_btn_lblMouseClicked
 
-    private void st_amount_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_st_amount_inputActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_st_amount_inputActionPerformed
-
-    private void vat_amount_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vat_amount_inputActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_vat_amount_inputActionPerformed
-
-    private void vat_percent_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vat_percent_inputActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_vat_percent_inputActionPerformed
-
-    private void discount_amount_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discount_amount_inputActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_discount_amount_inputActionPerformed
-
-    private void add_to_cart_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_to_cart_btnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_add_to_cart_btnActionPerformed
-
-    private void discount_percent_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discount_percent_inputActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_discount_percent_inputActionPerformed
-
-    private void st_percent_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_st_percent_inputActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_st_percent_inputActionPerformed
-
     private void sidebar_update_product_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sidebar_update_product_btn_lblMouseClicked
         resetLblColor(sidebar_invoice_list_btn_lbl);
         resetLblColor(sidebar_add_invoice_btn_lbl);
@@ -2360,6 +2267,97 @@ public class HomeUI extends javax.swing.JFrame {
             this.updateInvProduct(inv_id, pdt_id, qty);
         }
     }//GEN-LAST:event_update_invoice_btn_lblMouseClicked
+
+    private void add_invoice_btn_lblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_add_invoice_btn_lblMouseClicked
+        String cust_name = add_customer_name_input.getText();
+        String cust_contact = add_customer_contact_number_input.getText();
+        String remarks = add_remarks_input.getText();
+        Date inv_date = add_invoice_date_input.getDate();
+        float subtotal = Float.parseFloat(add_subtotal_input.getText());
+        float vat = Float.parseFloat(add_vat_amount_input.getText());
+        float st = Float.parseFloat(add_st_amount_input.getText());
+        float inv_amt = Float.parseFloat(add_inv_amt_input.getText());
+        
+        int inv_id = this.addInvoice(cust_name, cust_contact, remarks, inv_date, subtotal, vat, st, inv_amt);
+        int rows = add_product_details_tbl.getRowCount();
+        int pdt_id, qty;
+        for (int i = 0; i < rows; i++) {
+            pdt_id = Integer.parseInt(add_product_details_tbl.getValueAt(i, 0).toString());
+            qty = Integer.parseInt(add_product_details_tbl.getValueAt(i, 3).toString());
+            this.updateInvProduct(inv_id, pdt_id, qty);
+        }
+    }//GEN-LAST:event_add_invoice_btn_lblMouseClicked
+
+    private void add_vat_percent_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_vat_percent_inputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_add_vat_percent_inputActionPerformed
+
+    private void add_qty_inputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_add_qty_inputKeyReleased
+        Product pdt = this.getProductByName(add_invoice_product_combo_box.getSelectedItem().toString());
+        if(!add_qty_input.getText().equals("")) {
+            int qty = Integer.parseInt(add_qty_input.getText());
+            add_unit_price_input.setText(Float.toString(pdt.getunitprice()));
+            float total_amt = (pdt.getunitprice() - pdt.getdiscount()) * qty;
+            add_invoice_pdt_total_amount_input.setText(Float.toString(total_amt));
+        }
+    }//GEN-LAST:event_add_qty_inputKeyReleased
+
+    private void add_vat_amount_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_vat_amount_inputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_add_vat_amount_inputActionPerformed
+
+    private void add_invoice_product_combo_boxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_invoice_product_combo_boxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_add_invoice_product_combo_boxActionPerformed
+
+    private void add_st_percent_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_st_percent_inputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_add_st_percent_inputActionPerformed
+
+    private void add_st_amount_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_st_amount_inputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_add_st_amount_inputActionPerformed
+
+    private void add_delete_from_cart_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_delete_from_cart_btnActionPerformed
+        DefaultTableModel ptm = (DefaultTableModel)add_product_details_tbl.getModel();
+        int[] rows = add_product_details_tbl.getSelectedRows();
+        for (int i = 0; i < rows.length; i++) {
+            ptm.removeRow(rows[i] - i);
+        }
+        this.add_inv_amounts();
+        add_qty_input.setText("");
+        add_unit_price_input.setText("");
+        add_invoice_pdt_total_amount_input.setText("");
+    }//GEN-LAST:event_add_delete_from_cart_btnActionPerformed
+
+    private void add_product_details_tblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_add_product_details_tblMouseClicked
+        int row = add_product_details_tbl.getSelectedRow();
+        TableModel updt = add_product_details_tbl.getModel();
+        Product product = this.get_product(Integer.parseInt(updt.getValueAt(row, 0).toString()));
+        add_qty_input.setText(updt.getValueAt(row, 3).toString());
+        add_unit_price_input.setText(Float.toString(product.getunitprice()));
+        int qty = Integer.parseInt(updt.getValueAt(row, 3).toString());
+        float total_amt = (product.getunitprice() - product.getdiscount()) * qty;
+        add_invoice_pdt_total_amount_input.setText(Float.toString(total_amt));
+        add_invoice_product_combo_box.setSelectedItem(product.getname());
+    }//GEN-LAST:event_add_product_details_tblMouseClicked
+
+    private void add_add_to_cart_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_add_to_cart_btnActionPerformed
+        Product pdt = this.getProductByName(add_invoice_product_combo_box.getSelectedItem().toString());
+        int qty = Integer.parseInt(add_qty_input.getText());
+        float uprice = Float.parseFloat(add_unit_price_input.getText());
+        float tamt = Float.parseFloat(add_invoice_pdt_total_amount_input.getText());
+        DefaultTableModel ptm = (DefaultTableModel)add_product_details_tbl.getModel();
+        Object[] row = new Object[6];
+        row[0] = pdt.getid();
+        row[1] = pdt.getname();
+        row[2] = uprice;
+        row[3] = qty;
+        row[4] = pdt.getdiscount();
+        row[5] = tamt;
+        ptm.addRow(row);
+        this.add_inv_amounts();
+    }//GEN-LAST:event_add_add_to_cart_btnActionPerformed
  
     /**
      * @param args the command line arguments
@@ -2404,16 +2402,44 @@ public class HomeUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton add_add_to_cart_btn;
+    private javax.swing.JLabel add_cash_lbl;
+    private javax.swing.JTextField add_customer_contact_number_input;
+    private javax.swing.JTextField add_customer_name_input;
+    private javax.swing.JButton add_delete_from_cart_btn;
+    private javax.swing.JTextField add_inv_amt_input;
+    private javax.swing.JLabel add_invoice_btn_lbl;
+    private javax.swing.JLabel add_invoice_customer_name;
+    private javax.swing.JLabel add_invoice_customer_phone;
+    private com.toedter.calendar.JDateChooser add_invoice_date_input;
+    private javax.swing.JLabel add_invoice_date_lbl;
+    private javax.swing.JTextField add_invoice_number_input;
+    private javax.swing.JLabel add_invoice_number_lbl;
+    private javax.swing.JTextField add_invoice_pdt_total_amount_input;
     private javax.swing.JPanel add_invoice_pnl;
+    private javax.swing.JComboBox<String> add_invoice_product_combo_box;
+    private javax.swing.JLabel add_product_details_lbl;
+    private javax.swing.JTable add_product_details_tbl;
+    private javax.swing.JLabel add_product_name_lbl;
     private javax.swing.JPanel add_product_pnl;
-    private javax.swing.JButton add_to_cart_btn;
-    private javax.swing.JTextField cash_input;
-    private javax.swing.JLabel cash_lbl;
-    private javax.swing.JTextField change_input;
-    private javax.swing.JLabel change_lbl;
+    private javax.swing.JTextField add_qty_input;
+    private javax.swing.JLabel add_qty_lbl;
+    private javax.swing.JTextPane add_remarks_input;
+    private javax.swing.JLabel add_remarks_lbl;
+    private javax.swing.JLabel add_service_tax_lbl;
+    private javax.swing.JTextField add_st_amount_input;
+    private javax.swing.JTextField add_st_percent_input;
+    private javax.swing.JLabel add_st_percent_lbl;
+    private javax.swing.JTextField add_subtotal_input;
+    private javax.swing.JLabel add_subtotal_lbl;
+    private javax.swing.JLabel add_total_amount_lbl;
+    private javax.swing.JTextField add_unit_price_input;
+    private javax.swing.JLabel add_unit_price_lbl;
+    private javax.swing.JTextField add_vat_amount_input;
+    private javax.swing.JLabel add_vat_lbl;
+    private javax.swing.JTextField add_vat_percent_input;
+    private javax.swing.JLabel add_vat_percent_lbl;
     private javax.swing.JPanel content;
-    private javax.swing.JLabel create_invoice_lbl;
-    private javax.swing.JTextField customer_name_input;
     private javax.swing.JLabel delete_invoice_btn_lbl;
     private javax.swing.JTextField delete_invoice_id_input;
     private javax.swing.JLabel delete_invoice_id_lbl;
@@ -2424,22 +2450,12 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JLabel delete_product_id_lbl;
     private javax.swing.JLabel delete_product_lbl;
     private javax.swing.JPanel delete_product_pnl;
-    private javax.swing.JTextField discount_amount_input;
-    private javax.swing.JLabel discount_lbl;
-    private javax.swing.JTextField discount_percent_input;
-    private javax.swing.JLabel discount_percent_lbl;
     private javax.swing.JLabel exit_lbl;
     private javax.swing.JPanel exit_pnl;
     private javax.swing.JPanel header;
     private javax.swing.JPanel home_pnl;
-    private com.toedter.calendar.JDateChooser invoice_date_input;
-    private javax.swing.JLabel invoice_date_lbl;
     private javax.swing.JScrollPane invoice_list_scrl_pane;
     private javax.swing.JTable invoice_list_tbl;
-    private javax.swing.JTextField invoice_number_input;
-    private javax.swing.JLabel invoice_number_lbl;
-    private javax.swing.JComboBox<String> invoice_product_combo_box;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel logout;
@@ -2458,22 +2474,13 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JTextField pdt_unit_price_input;
     private javax.swing.JLabel pdt_unit_price_lbl;
     private javax.swing.JLabel pdt_unit_price_lbl2;
-    private javax.swing.JLabel product_details_lbl;
-    private javax.swing.JScrollPane product_details_scrl_pane;
     private javax.swing.JScrollPane product_details_scrl_pane1;
-    private javax.swing.JTable product_details_tbl;
+    private javax.swing.JScrollPane product_details_scrl_pane2;
     private javax.swing.JScrollPane product_list_scrl_pane;
     private javax.swing.JTable product_list_tbl;
-    private javax.swing.JLabel product_name_lbl;
-    private javax.swing.JTextField qty_input;
-    private javax.swing.JLabel qty_lbl;
-    private javax.swing.JTextPane remarks_input;
-    private javax.swing.JLabel remarks_lbl;
-    private javax.swing.JScrollPane remarks_scrl_pane;
     private javax.swing.JScrollPane remarks_scrl_pane1;
+    private javax.swing.JScrollPane remarks_scrl_pane2;
     private javax.swing.JLabel save_product_btn_lbl;
-    private javax.swing.JLabel save_product_btn_lbl1;
-    private javax.swing.JLabel service_tax_lbl;
     private javax.swing.JPanel sidebar;
     private javax.swing.JLabel sidebar_add_invoice_btn_lbl;
     private javax.swing.JLabel sidebar_add_product_btn_lbl;
@@ -2486,15 +2493,6 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JLabel sidebar_product_list_btn_lbl;
     private javax.swing.JLabel sidebar_update_invoice_btn_lbl;
     private javax.swing.JLabel sidebar_update_product_btn_lbl;
-    private javax.swing.JTextField st_amount_input;
-    private javax.swing.JTextField st_percent_input;
-    private javax.swing.JLabel st_percent_lbl;
-    private javax.swing.JTextField subtotal_input;
-    private javax.swing.JLabel subtotal_lbl;
-    private javax.swing.JLabel total_amount_lbl;
-    private javax.swing.JTextField unit_price_input;
-    private javax.swing.JTextField unit_price_input1;
-    private javax.swing.JLabel unit_price_lbl;
     private javax.swing.JButton update_add_to_cart_btn;
     private javax.swing.JLabel update_cash_lbl;
     private javax.swing.JTextField update_customer_contact_number_input;
@@ -2507,6 +2505,7 @@ public class HomeUI extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser update_invoice_date_input;
     private javax.swing.JLabel update_invoice_date_lbl;
     private javax.swing.JLabel update_invoice_lbl;
+    private javax.swing.JLabel update_invoice_lbl1;
     private javax.swing.JTextField update_invoice_number_input;
     private javax.swing.JLabel update_invoice_number_lbl;
     private javax.swing.JTextField update_invoice_pdt_total_amount_input;
@@ -2539,10 +2538,6 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JTextField update_vat_percent_input;
     private javax.swing.JLabel update_vat_percent_lbl;
     private javax.swing.JLabel user_login_heading_lbl;
-    private javax.swing.JTextField vat_amount_input;
-    private javax.swing.JLabel vat_lbl;
-    private javax.swing.JTextField vat_percent_input;
-    private javax.swing.JLabel vat_percent_lbl;
     // End of variables declaration//GEN-END:variables
 
     private void setLblColor(JLabel lbl) {
