@@ -11,6 +11,7 @@ package invoicemanagement;
  */
 class Product {
     private int id;
+    public int qty;
     private String name, description;
     private float discount, unit_price;
     
@@ -24,6 +25,10 @@ class Product {
     
     public int getid() {
         return id;
+    }
+    
+    public int getqty() {
+        return qty;
     }
     public String getname() {
         return name;
