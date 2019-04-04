@@ -13,34 +13,46 @@ Query OK, 0 rows affected (0.028 sec)
 MariaDB [invoice]> CREATE TABLE inv_invoices(id int(11) AUTO_INCREMENT NOT NULL PRIMARY KEY, customer VARCHAR(250) NOT NULL, customer_contact_number VARCHAR(15), remarks VARCHAR(500), inv_date DATE NOT NULL, subtotal FLOAT NOT NULL, vat FLOAT NOT NULL, service_tax FLOAT NOT NULL, inv_amt FLOAT NOT NULL);
 Query OK, 0 rows affected (0.018 sec)
 
-MariaDB [invoice]> CREATE TABLE inv_products(id int(11) AUTO_INCREMENT NOT NULL PRIMARY KEY, name VARCHAR(250) NOT NULL, description VARCHAR(500), discount FLOAT, unit_price FLOAT NOT NULL);
+MariaDB [invoice]> CREATE TABLE inv_booking_types(id int(11) AUTO_INCREMENT NOT NULL PRIMARY KEY, name VARCHAR(250) NOT NULL, description VARCHAR(500), discount FLOAT, unit_price FLOAT NOT NULL);
 Query OK, 0 rows affected (0.032 sec)
 
-MariaDB [invoice]> CREATE TABLE inv_invoice_products(qty INT(11) NOT NULL, product_id INT(11) NOT NULL, invoice_id INT(11) NOT NULL, FOREIGN KEY(invoice_id) REFERENCES inv_invoices(id) ON DELETE CASCADE, FOREIGN KEY(product_id) REFERENCES inv_products(id));
+MariaDB [invoice]> CREATE TABLE inv_invoice_booking_types(qty INT(11) NOT NULL, booking_type_id INT(11) NOT NULL, invoice_id INT(11) NOT NULL, FOREIGN KEY(invoice_id) REFERENCES inv_invoices(id) ON DELETE CASCADE, FOREIGN KEY(booking_type_id) REFERENCES inv_booking_types(id));
 Query OK, 0 rows affected (0.037 sec)
 
-MariaDB [invoice]> SHOW TABLES;
-+----------------------+
-| Tables_in_invoice    |
-+----------------------+
-| inv_invoice_products |
-| inv_invoices         |
-| inv_products         |
-| inv_users            |
-+----------------------+
-4 rows in set (0.001 sec)
+MariaDB [invoice]> show tables;
++---------------------------+
+| Tables_in_invoice         |
++---------------------------+
+| inv_booking_types         |
+| inv_invoice_booking_types |
+| inv_invoices              |
+| inv_users                 |
++---------------------------+
+4 rows in set (0.000 sec)
 
-MariaDB [invoice]> DESC inv_invoice_products;
-+------------+---------+------+-----+---------+-------+
-| Field      | Type    | Null | Key | Default | Extra |
-+------------+---------+------+-----+---------+-------+
-| qty        | int(11) | NO   |     | NULL    |       |
-| product_id | int(11) | NO   | MUL | NULL    |       |
-| invoice_id | int(11) | NO   | MUL | NULL    |       |
-+------------+---------+------+-----+---------+-------+
-3 rows in set (0.004 sec)
+MariaDB [invoice]> desc inv_booking_types;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| id          | int(11)      | NO   | PRI | NULL    | auto_increment |
+| name        | varchar(250) | NO   |     | NULL    |                |
+| description | varchar(500) | YES  |     | NULL    |                |
+| discount    | float        | YES  |     | NULL    |                |
+| unit_price  | float        | NO   |     | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+5 rows in set (0.002 sec)
 
-MariaDB [invoice]> DESC inv_invoices;
+MariaDB [invoice]> desc inv_invoice_booking_types;
++-----------------+---------+------+-----+---------+-------+
+| Field           | Type    | Null | Key | Default | Extra |
++-----------------+---------+------+-----+---------+-------+
+| qty             | int(11) | NO   |     | NULL    |       |
+| booking_type_id | int(11) | NO   | MUL | NULL    |       |
+| invoice_id      | int(11) | NO   | MUL | NULL    |       |
++-----------------+---------+------+-----+---------+-------+
+3 rows in set (0.003 sec)
+
+MariaDB [invoice]> desc inv_invoices;
 +-------------------------+--------------+------+-----+---------+----------------+
 | Field                   | Type         | Null | Key | Default | Extra          |
 +-------------------------+--------------+------+-----+---------+----------------+
@@ -55,18 +67,6 @@ MariaDB [invoice]> DESC inv_invoices;
 | inv_amt                 | float        | NO   |     | NULL    |                |
 +-------------------------+--------------+------+-----+---------+----------------+
 9 rows in set (0.002 sec)
-
-MariaDB [invoice]> DESC inv_products;
-+-------------+--------------+------+-----+---------+----------------+
-| Field       | Type         | Null | Key | Default | Extra          |
-+-------------+--------------+------+-----+---------+----------------+
-| id          | int(11)      | NO   | PRI | NULL    | auto_increment |
-| name        | varchar(250) | NO   |     | NULL    |                |
-| description | varchar(500) | YES  |     | NULL    |                |
-| discount    | float        | YES  |     | NULL    |                |
-| unit_price  | float        | NO   |     | NULL    |                |
-+-------------+--------------+------+-----+---------+----------------+
-5 rows in set (0.003 sec)
 
 MariaDB [invoice]> DESC inv_users;
 +--------+--------------+------+-----+---------+----------------+
