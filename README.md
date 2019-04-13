@@ -1,5 +1,11 @@
 # InvoiceManagementSystem
-Windows Neon &amp; Metro Style Java based Invoice Management System using MySQL as the DB server.
+Windows Neon &amp; Metro Style Java based Invoice Management System for Hotels including Booking Management using MySQL as the DB server.
+
+# Development Details
+ * Language: Java - JForms (Swing) 
+ * Database: MySQL (MariaDB)
+ * IDE: Netbeans GUI
+ * OS: Any (OS Independent)
 
 # Database Structure
 
